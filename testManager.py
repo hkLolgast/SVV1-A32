@@ -7,6 +7,7 @@ import unittest
 from unittest.loader import TestLoader
 import time
 import os
+from datetime import datetime
 
 class TestMain(unittest.TestCase):
     def testMain(self):
@@ -65,16 +66,32 @@ def checkTests():
     return uncheckedFunctions
     
 def generateTests():
+    template = \
+"""'''
+Created on {date}
+
+@author: Rick
+'''
+import unittest
+from {fileName} import *
+
+class Test{fileName}(unittest.TestCase):
+
+
+if __name__ == "__main__":
+    unittest.main()
+"""
     uncheckedFunctions = checkTests()
     if uncheckedFunctions!={}:
         print "\nGenerating tests..."
         for name in uncheckedFunctions:
-            print "test"+name
-            if os.path.exists("./test"+name):
+            if os.path.isfile("test"+name+".py"):
                 print "yay"
             else:
-                print "no"
-        
+                d = {"fileName":name,
+                     "date":datetime.now().strftime("%b %d, %Y")}
+                template = template.format(**d).split("\n")
+                print template
     
 if __name__=="__main__":
     stop = False
