@@ -11,7 +11,9 @@ class Test(unittest.TestCase):
 
     def testName(self):
         self.failUnless(False)
-
+        
+    def hai(self):
+        print "Hello world"
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
