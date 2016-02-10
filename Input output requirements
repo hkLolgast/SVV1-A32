@@ -1,0 +1,27 @@
+Input:
+	Aircraft parameters:
+		Lengths
+		Fuselage radius
+		Floor height
+		Skin thickness
+		Floor thickness
+		Thickness of stiffener
+		Height of stiffener
+		Width of stiffener
+		Number of stiffeners
+		Distance between fuselage and tail
+		Distance between fuselage and landing gear
+		Design landing mass
+		
+	Discretization
+		Number of segments
+		Distribution of segments
+		
+	Loadings
+		Force on the tail
+		Forces/moments from static analysis
+		
+Outputs
+	Maximum stresses
+	Maximum shear flow
+	Locations of the above
