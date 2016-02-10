@@ -8,6 +8,7 @@ from unittest.loader import TestLoader
 import time
 import os
 from datetime import datetime
+from getpass import getuser 
 
 class TestMain(unittest.TestCase):
     def testMain(self):
@@ -54,44 +55,76 @@ def checkTests():
             uncheckedFunctions[name] = functionsToCheck[name]-checkedFunctions[name]
         else:
             uncheckedFunctions[name] = functionsToCheck[name]
-            
-#     print checkedFunctions
-#     print uncheckedFunctions
-    if uncheckedFunctions!={}:
+
+    if uncheckedFunctions!={} and not all(uncheckedFunctions[name]==set() for name in uncheckedFunctions):
         print "Unchecked functions:"
         for name in uncheckedFunctions:
-            print "In %s:" % (name+".py")
-            for f in uncheckedFunctions[name]:
-                print "\t%s" % f
+            if uncheckedFunctions[name]!=set():
+                print "In %s:" % (name+".py")
+                for f in uncheckedFunctions[name]:
+                    print "\t%s" % f
+    else:
+        print "All functions checked"
+        return {}
     return uncheckedFunctions
     
 def generateTests():
-    template = \
+    fileTemplate = \
 """'''
 Created on {date}
 
-@author: Rick
+@author: {userName}
 '''
 import unittest
 from {fileName} import *
 
 class Test{fileName}(unittest.TestCase):
 
-
 if __name__ == "__main__":
     unittest.main()
 """
+    
+    functionTemplate = \
+"""    def test{functionName}(self):
+        self.fail("Not implemented")
+"""
+#Note: the indentation is important
+
     uncheckedFunctions = checkTests()
     if uncheckedFunctions!={}:
         print "\nGenerating tests..."
         for name in uncheckedFunctions:
-            if os.path.isfile("test"+name+".py"):
-                print "yay"
+            d = {"fileName":name,
+                 "date":datetime.now().strftime("%b %d, %Y"),
+                 "userName":getuser()}
+            
+            #Load old contents, or generate from template if the file does not exist yet
+            if not os.path.isfile("test"+name+".py"):
+                contents = fileTemplate.format(**d).split("\n")
             else:
-                d = {"fileName":name,
-                     "date":datetime.now().strftime("%b %d, %Y")}
-                template = template.format(**d).split("\n")
-                print template
+                with open("test"+name+".py","r") as f:
+                    contents = f.readlines()
+            
+            #Determine where in the file the new lines should be inserted
+            for i,line in enumerate(contents):
+                if line.rstrip()=="class Test{fileName}(unittest.TestCase):".format(**d):
+                    insertion = i+1
+                    break
+            else:
+                print "Corrupted test file for {fileName}.py: no Test class found. Please remove the file manually.".format(**d)
+                continue
+            
+            #Insert the new lines
+            for func in uncheckedFunctions[name]:
+                for i,line in enumerate(functionTemplate.format(functionName = func).split("\n")):
+                    contents.insert(insertion+i, line)
+                    
+            #Write the new contents
+            with open("test"+name+".py","w") as f:
+                for line in contents:
+                    f.write(line.rstrip("\n")+"\n")
+    print "Tests generated."
+    print
     
 if __name__=="__main__":
     stop = False
