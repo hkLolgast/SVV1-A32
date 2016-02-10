@@ -1,4 +1,7 @@
 Required blocks:
+	Discretize fuselage
+		I: number of elements
+		O: list of elements
 	Calculate area for a given crossection
 		I: type and dimensions of crosssection (e.g. I, rectangular, circular)
 		O: area
@@ -21,8 +24,9 @@ Required blocks:
 			external forces acting on the element
 		O: normal stress in the element
 	Calculate change in loading between borders of an element by applying equilibrium
-		I: forces/moments acting at the borders of the element
+		I: forces/moments acting at one of the borders of the element
 			external forces acting on the element
+		O: forces/moments from this element acting on the next element
 	Search the discretization elements to find the location of maximum loading
 		I: ordered list of all loadings in all segments
 		O: index of critical element
