@@ -3,5 +3,5 @@ Required blocks:
 	Calculate area for a given crossection
 	Calculate shear stress in a given element for a given loading
 	Calculate normal stress in a given element for a given loading
-	Calculate change in loading between borders of an element
+	Calculate change in loading between borders of an element by applying equilibrium
 	Search the discretization elements to find the location of maximum loading
