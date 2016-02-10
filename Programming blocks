@@ -1,7 +1,29 @@
 Required blocks:
-	Calculate moment of inertia for a given crossection
 	Calculate area for a given crossection
+		I: type and dimensions of crosssection (e.g. I, rectangular, circular)
+		O: area
+	Calculate neutral axis
+		I: areas of the parts and their distance to reference line
+		O: coordinates of the neutral axis
+	Calculate moment of inertia for a given crossection
+		I: type and dimensions of crosssection
+		O: moment of inertia
+	Calculate forces/moments from static analysis
+		I: forces and their point of application
+			location about which to calculate
+		O: forces and moments about the given point
 	Calculate shear stress in a given element for a given loading
+		I: forces/moments acting at the borders of the element
+			external forces acting on the element
+		O: shear stress in the element
 	Calculate normal stress in a given element for a given loading
+		I: forces/moments acting at the borders of the element
+			external forces acting on the element
+		O: normal stress in the element
 	Calculate change in loading between borders of an element by applying equilibrium
+		I: forces/moments acting at the borders of the element
+			external forces acting on the element
 	Search the discretization elements to find the location of maximum loading
+		I: ordered list of all loadings in all segments
+		O: index of critical element
+		
