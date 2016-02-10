@@ -16,6 +16,7 @@ Input:
 	Discretization
 		Number of segments
 		Distribution of segments
+		Crosssection of the aircraft
 		
 	Loadings
 		Force on the tail
