@@ -1,0 +1,15 @@
+Verification
+	-Unit tests to test individual functions
+		-Pythons unittest module
+		-Values calculated by hand
+		-Varying inputs
+		
+	-Assembly tests to test coupled functions
+		-Values calculated by hand
+		-Varying inputs
+		
+	-Verification of entire program
+		-Check if finer discretizations converge to one solution
+		-Comparing with analytical solution
+		-Assert if solutions are similar
+		-Explain differences between numerical and analytical
