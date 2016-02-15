@@ -10,9 +10,6 @@ import os
 from datetime import datetime
 from getpass import getuser 
 
-class TestMain(unittest.TestCase):
-    def testMain(self):
-        self.failUnless(False)
         
 def main():
     suite = TestLoader().discover(".")

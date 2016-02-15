@@ -8,10 +8,13 @@ from CalcISA import *
 
 class TestCalcISA(unittest.TestCase):
     def testcalcHeight(self):
-        self.fail("Not implemented")
+        self.assertAlmostEqual(calcHeight(83749.8),1578,0)
 
     def testvaluesAtHeight(self):
-        self.fail("Not implemented")
+        T, P, rho = valuesAtHeight(1578)
+        self.assertAlmostEqual(T, 277.893, 2)
+        self.assertAlmostEqual(P, 83749.8, -1)
+        self.assertAlmostEqual(rho, 1.04989,4)
 
     def testmeter(self):
         self.assertAlmostEqual(0.3048, meter(1))

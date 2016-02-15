@@ -68,7 +68,7 @@ def valuesAtHeight(h1):
 def calcHeight(P1):
     g0  = constants["g0"]
     R   = constants["R"]
-    a   = constants["a"]
+#     a   = constants["a"]
 #     h0  = baseValues["h"]
     T0  = baseValues["T"]
     P0  = baseValues["P"]
@@ -79,6 +79,7 @@ def calcHeight(P1):
         h0=11000
         return(-R*T0*math.log(P1/P0)/g0+h0)
     else:
+        a = constants["a"][0]
         return((T0/a)*((P1/P0)**(-a*R/g0)-1))
 
 if __name__=="__main__":
