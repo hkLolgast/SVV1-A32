@@ -65,6 +65,9 @@ class Testmain(unittest.TestCase):
         (Frear2xACT, Frear2yACT) = reactionForces(Lf1, Lf2, Lf3, L, R, W, Sx, dtailz, dtaily, dlgy)
         
         self.fail("Analytical solution not yet available")
+        for loc in ("front", "rear1", "rear2"):
+            for dir in ("x", "y"):
+                self.assertEqual(eval("F"+loc+dir+"ACT"), eval("F"+loc+dir+"VER"))
 
 if __name__ == "__main__":
     unittest.main()

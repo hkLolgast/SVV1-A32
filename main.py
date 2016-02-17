@@ -5,6 +5,7 @@ Created on Feb 15, 2016
 '''
 import numpy as np
 from numpy.linalg import solve
+import matplotlib.pyplot as plt
 
 def centroid(objects):
     '''
@@ -92,18 +93,26 @@ def shearCenter(booms):
     
     return (Cx, Cy)
 
+def boomLocations(nBooms,R,addFloor = False, floorHeight = None):
+    '''
+    addFloor: Whether to add two booms at the end of the floor
+    '''
+    angles = np.linspace(0,2*np.pi,nBooms+1)[:-1]
+    if addFloor:
+        angle1 = np.arccos(-(R-floorHeight)/R)
+        angle2 = 2*np.pi-angle1
+        i = 0
+        while i<len(angles):
+            if angles[i]<=angle1<angles[(i+1)%len(angles)]:
+                angles = np.insert(angles,i+1,angle1)
+                i+=1
+            elif angles[i]<=angle2<angles[(i+1)%len(angles)]:
+                angles = np.insert(angles, i+1,angle2)
+                break
+            i+=1
+        
+    locations = zip(R*np.sin(angles), R*np.cos(angles))
+    return locations
+
 if __name__=="__main__":
-    Lf1 = 4.0
-    Lf2 = 12.5
-    Lf3 = 5.2
-    L   = 30.0
-    R   = 2.0
-    W   = 65000.0
-    Sx  = 1.7e5
-    dtailz  = 2.8
-    dtaily  = 4.0
-    dlgy    = 1.8
-    Ffront, Frear1, Frear2 = reactionForces(Lf1, Lf2, Lf3, L, R, W, Sx, dtailz, dtaily, dlgy)
-    print "Front (x,y): ",Ffront
-    print "Rear1 (x,y): ",Frear1
-    print "Rear2 (x,y): ",Frear2
+    pass
