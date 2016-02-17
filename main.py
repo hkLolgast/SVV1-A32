@@ -6,6 +6,7 @@ Created on Feb 15, 2016
 import numpy as np
 from numpy.linalg import solve
 import matplotlib.pyplot as plt
+import structuralAnalysis
 
 def centroid(objects):
     '''
@@ -117,7 +118,6 @@ def realMomentOfInertia(axis, R, ts, floorHeight, tf, hst, wst, tst):
         I+=np.pi*R**3*ts+np.pi*2*R*ts*(0-Cy)**2
         I+=1/12.*floorLength*tf**3+floorLength*tf*(-(R-floorHeight)-Cy)**2
         
-        
         for (x,y) in boomLocations(36, R, False, floorHeight):
             I+=stiffenerArea*(y-Cy)**2
         
@@ -163,4 +163,13 @@ def boomLocations(nBooms,R,addFloor = False, floorHeight = None):
     return locations
 
 if __name__=="__main__":
-    pass
+    Mx = My = 15
+    fh = 1.8
+    R = 2.
+    booms = boomLocations(36, R, False, fh)
+    ts = 0.003
+    tf = 0.02
+    hst = 0.015
+    wst = 0.02
+    tst = 0.012
+    print structuralAnalysis.boomAreas(Mx, My, booms, R, ts, fh, tf, hst, wst, tst)
