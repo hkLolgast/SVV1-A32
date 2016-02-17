@@ -7,18 +7,18 @@ import unittest
 from main import *
 
 class Testmain(unittest.TestCase):
-    def testmomentOfInertia(self):
+    def testidealMomentOfInertia(self):
         booms = [(5,(3,2))]
-        self.assertEqual(momentOfInertia("x", booms), 0.)
-        self.assertEqual(momentOfInertia("y", booms), 0.)
-        self.assertEqual(momentOfInertia("xy", booms),0.)
+        self.assertEqual(idealMomentOfInertia("x", booms), 0.)
+        self.assertEqual(idealMomentOfInertia("y", booms), 0.)
+        self.assertEqual(idealMomentOfInertia("xy", booms),0.)
         booms.append((5,(-3,-2)))
-        self.assertEqual(momentOfInertia("x", booms),40)
-        self.assertEqual(momentOfInertia("y", booms),90)
-        self.assertEqual(momentOfInertia("xy",booms),60)
+        self.assertEqual(idealMomentOfInertia("x", booms),40)
+        self.assertEqual(idealMomentOfInertia("y", booms),90)
+        self.assertEqual(idealMomentOfInertia("xy",booms),60)
         booms.append((5,(3,-2)))
         booms.append((5,(-3,2)))
-        self.assertEqual(momentOfInertia("xy", booms),0)
+        self.assertEqual(idealMomentOfInertia("xy", booms),0)
         
 
     def testcentroid(self):

@@ -68,7 +68,7 @@ Mz  0        0      0.5Lf3  -0.5Lf3 0     = Sx*(dlgy+dtaily)
     
     return [Ffront, Frear1, Frear2]
 
-def momentOfInertia(axis, booms):
+def idealMomentOfInertia(axis, booms):
     '''
     Calculates the moment of inertia about axis of the idealised structure
     booms: list of boom tuples
@@ -85,6 +85,54 @@ def momentOfInertia(axis, booms):
     for (area, pos) in booms:
         I+=area*(pos[naxis1]-neutral1)*(pos[naxis2]-neutral2)
     
+    return I
+
+def realMomentOfInertia(axis, R, ts, floorHeight, tf, hst, wst, tst):
+    I = 0
+    if axis=="xy":
+        pass
+    elif axis=="x":
+        floorAngle = np.arccos((R-floorHeight)/R)
+        floorLength = 2*R*np.sin(floorAngle)
+        
+        sumAd = 0
+        sumA = 0
+        
+        #fuselage
+        sumAd+=np.pi*2*R*ts*0
+        sumA +=np.pi*2*R*ts
+        
+        #floor
+        sumAd+=floorLength*tf*(-(R-floorHeight))
+        sumA +=floorLength*tf
+        
+        #stiffeners
+        stiffenerArea = hst*tst+wst*tst
+        for (x,y) in boomLocations(36, R, False, floorHeight):
+            sumAd+=stiffenerArea*y
+            sumA +=stiffenerArea
+            
+        Cy = sumAd/sumA
+        
+        I+=np.pi*R**3*ts+np.pi*2*R*ts*(0-Cy)**2
+        I+=1/12.*floorLength*tf**3+floorLength*tf*(-(R-floorHeight)-Cy)**2
+        
+        
+        for (x,y) in boomLocations(36, R, False, floorHeight):
+            I+=stiffenerArea*(y-Cy)**2
+        
+    elif axis=="y":
+        I+=np.pi*R**3*ts
+        floorAngle = np.arccos((R-floorHeight)/R)
+        floorLength = 2*R*np.sin(floorAngle)
+        I+=1/12.*floorLength**3*tf
+        stiffenerArea = hst*tst+wst*tst
+        for (x,y) in boomLocations(36, R, False, floorHeight):
+            I+=stiffenerArea*x**2
+    
+    else:
+        raise ValueError, "axis must be either x or y or xy"
+
     return I
 
 def shearCenter(booms):
