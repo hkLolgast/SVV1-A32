@@ -78,8 +78,8 @@ def momentOfInertia(axis, booms):
         raise ValueError, "axis must be either x or y or xy"
     naxis1 = 1 if axis=="x" else 0
     naxis2 = naxis1 if axis!="xy" else int(not naxis1)
-    neutral1 = neutralLine("x" if axis!="y" else "y", booms)
-    neutral2 = neutralLine("y" if axis!="x" else "x", booms)
+    neutral1 = neutralLine("y" if axis!="x" else "x", booms)
+    neutral2 = neutralLine("x" if axis!="y" else "y", booms)
     
     for (area, pos) in booms:
         I+=area*(pos[naxis1]-neutral1)*(pos[naxis2]-neutral2)
