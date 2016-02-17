@@ -96,27 +96,11 @@ def realMomentOfInertia(axis, R, ts, floorHeight, tf, hst, wst, tst):
         floorAngle = np.arccos((R-floorHeight)/R)
         floorLength = 2*R*np.sin(floorAngle)
         
-        sumAd = 0
-        sumA = 0
-        
-        #fuselage
-        sumAd+=np.pi*2*R*ts*0
-        sumA +=np.pi*2*R*ts
-        
-        #floor
-        sumAd+=floorLength*tf*(-(R-floorHeight))
-        sumA +=floorLength*tf
-        
-        #stiffeners
-        stiffenerArea = hst*tst+wst*tst
-        for (x,y) in boomLocations(36, R, False, floorHeight):
-            sumAd+=stiffenerArea*y
-            sumA +=stiffenerArea
-            
-        Cy = sumAd/sumA
+        Cx, Cy = realCentroid(R, ts, floorHeight, tf, hst, wst, tst)
         
         I+=np.pi*R**3*ts+np.pi*2*R*ts*(0-Cy)**2
         I+=1/12.*floorLength*tf**3+floorLength*tf*(-(R-floorHeight)-Cy)**2
+        stiffenerArea = hst*tst+wst*tst
         
         for (x,y) in boomLocations(36, R, False, floorHeight):
             I+=stiffenerArea*(y-Cy)**2
@@ -134,6 +118,31 @@ def realMomentOfInertia(axis, R, ts, floorHeight, tf, hst, wst, tst):
         raise ValueError, "axis must be either x or y or xy"
 
     return I
+
+def realCentroid(R, ts, floorHeight, tf, hst, wst, tst):
+    floorAngle = np.arccos((R-floorHeight)/R)
+    floorLength = 2*R*np.sin(floorAngle)
+    
+    sumAd = 0
+    sumA = 0
+    
+    #fuselage
+    sumAd+=np.pi*2*R*ts*0
+    sumA +=np.pi*2*R*ts
+    
+    #floor
+    sumAd+=floorLength*tf*(-(R-floorHeight))
+    sumA +=floorLength*tf
+    
+    #stiffeners
+    stiffenerArea = hst*tst+wst*tst
+    for (x,y) in boomLocations(36, R, False, floorHeight):
+        sumAd+=stiffenerArea*y
+        sumA +=stiffenerArea
+        
+    Cy = sumAd/sumA
+    
+    return (0,Cy)               #Symmetry -> Cx = 0
 
 def shearCenter(booms):
     Cx = 0
@@ -172,4 +181,5 @@ if __name__=="__main__":
     hst = 0.015
     wst = 0.02
     tst = 0.012
-    print structuralAnalysis.boomAreas(Mx, My, booms, R, ts, fh, tf, hst, wst, tst)
+    for A in structuralAnalysis.boomAreas(Mx, My, booms, R, ts, fh, tf, hst, wst, tst):
+        print A

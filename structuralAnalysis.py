@@ -9,12 +9,12 @@ B_n = sum([t_D*b/6*(2+sig_m/sig_n) for n in adjacent_booms]
 s1/s2 = (My/Iyy*x1+Mx/Ixx*y1)/(My/Iyy*x2+Mx/Ixx*Iyy)
 '''
 
-from main import realMomentOfInertia
+import main
 import numpy as np
 
 def boomAreas(Mx, My, booms, R, ts, floorHeight, tf, hst, wst, tst):
-    Ixx = realMomentOfInertia("x", R, ts, floorHeight, tf, hst, wst, tst)
-    Iyy = realMomentOfInertia("y", R, ts, floorHeight, tf, hst, wst, tst)
+    Ixx = main.realMomentOfInertia("x", R, ts, floorHeight, tf, hst, wst, tst)
+    Iyy = main.realMomentOfInertia("y", R, ts, floorHeight, tf, hst, wst, tst)
     stressBases = [0]*len(booms)
     floorDist1 = [0]*len(booms)
     floorDist2 = [0]*len(booms)
@@ -23,8 +23,11 @@ def boomAreas(Mx, My, booms, R, ts, floorHeight, tf, hst, wst, tst):
     floorLength = R*np.sin(floorAngle)
     floorAttach1 = (floorLength, floorHeight - R)
     floorAttach2 = (-floorLength, floorHeight - R)
+    
+    Cx, Cy = main.realCentroid(R, ts, floorHeight, tf, hst, wst, tst)
+    
     for i,(x,y) in enumerate(booms):
-        stressBases[i] = My/Iyy*x+Mx/Ixx*y
+        stressBases[i] = My/Iyy*(x-Cx)+Mx/Ixx*(y-Cy)
         floorDist1[i] = ((x-floorAttach1[0])**2+(y-floorAttach1[1])**2)**0.5
         floorDist2[i] = ((x-floorAttach2[0])**2+(y-floorAttach2[1])**2)**0.5
     
