@@ -41,9 +41,9 @@ def reactionForces(Lf1, Lf2, Lf3, L, R, W, Sx, dtailz, dtaily, dlgy):
     '''
     RLx      FLx    RL1y    RL2y    FLy
 Fx  1        1      0       0       0     = Sx
-Fy  0        0      1       1       1     = W
+Fy  0        0      1       1       1     = 3*W*9.81
 Fz  0        0      0       0       0     = 0
-Mx  0        0      0       0       Lf2   = W*(Lf1+Lf2-0.5*L)
+Mx  0        0      0       0       Lf2   = 3*W*9.81*(Lf1+Lf2-0.5*L)
 My  0        LF2    0       0       0     = Sx*(L-(Lf1+Lf2)+dtailz)
 Mz  0        0      0.5Lf3  -0.5Lf3 0     = Sx*(dlgy+dtaily)
     '''
@@ -54,8 +54,8 @@ Mz  0        0      0.5Lf3  -0.5Lf3 0     = Sx*(dlgy+dtaily)
                    [0,       0,     Lf3/2., -Lf3/2.,0,     ]])
     
     b = np.array([[Sx,                     
-    W,               
-    W*(Lf1+Lf2-0.5*L),      
+    3*W*9.81,               
+    3*W*9.81*(Lf1+Lf2-0.5*L),      
     Sx*(L-(Lf1+Lf2)+dtailz),
     Sx*(dlgy+dtaily),]]).T       
     RLx, FLx, RL1y, RL2y, FLy = solve(a, b)
@@ -74,15 +74,36 @@ def momentOfInertia(axis, booms):
     boom: (area, (x, y))
     '''
     I = 0
-    if axis not in ("x", "y"):
-        raise ValueError, "axis must be either x or y"
-    naxis = 1 if axis=="x" else 0
-    neutral = neutralLine(axis, booms)
+    if axis not in ("x", "y", "xy"):
+        raise ValueError, "axis must be either x or y or xy"
+    naxis1 = 1 if axis=="x" else 0
+    naxis2 = naxis1 if axis!="xy" else int(not naxis1)
+    neutral1 = neutralLine("x" if axis!="y" else "y", booms)
+    neutral2 = neutralLine("y" if axis!="x" else "x", booms)
     
     for (area, pos) in booms:
-        I+=area*(pos[naxis]-neutral)**2
+        I+=area*(pos[naxis1]-neutral1)*(pos[naxis2]-neutral2)
     
     return I
 
+def shearCenter(booms):
+    Cx = 0
+    Cy = None
+    
+    return (Cx, Cy)
+
 if __name__=="__main__":
-    pass
+    Lf1 = 4.0
+    Lf2 = 12.5
+    Lf3 = 5.2
+    L   = 30.0
+    R   = 2.0
+    W   = 65000.0
+    Sx  = 1.7e5
+    dtailz  = 2.8
+    dtaily  = 4.0
+    dlgy    = 1.8
+    Ffront, Frear1, Frear2 = reactionForces(Lf1, Lf2, Lf3, L, R, W, Sx, dtailz, dtaily, dlgy)
+    print "Front (x,y): ",Ffront
+    print "Rear1 (x,y): ",Frear1
+    print "Rear2 (x,y): ",Frear2
