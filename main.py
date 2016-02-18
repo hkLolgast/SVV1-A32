@@ -3,20 +3,30 @@ Created on Feb 15, 2016
 
 @author: Rick
 '''
-import numpy as np
+try:
+    import numpy as np
+except ImportError:
+    import os
+    try:
+        os.system("pip install numpy")
+        import numpy as np
+    except:
+        print "Please, be so kind to install pip if you want to do anything useful with python"
+        os.system("pause")
+        quit()
 from numpy.linalg import solve
-import matplotlib.pyplot as plt
+try:
+    import matplotlib.pyplot as plt
+except ImportError:
+    import os
+    os.system("pip install matplotlib")
+    import matplotlib.pyplot as plt
 import structuralAnalysis
 
 def centroid(objects):
     '''
     objects: list of (area, (x, y))
     '''
-#     if axis not in ("x", "y"):
-#         raise ValueError, "axis must be either x or y"
-#     naxis = 0 if axis=="x" else 1
-#     if not all(len(o[1])>naxis for o in objects):
-#         raise ValueError, "Position argument of object must be at least %d for axis %s" % (naxis+1, axis)
     sumAdx = 0.
     sumAdy = 0.
     sumA = 0.
@@ -46,7 +56,7 @@ Fx  1        1      0       0       0     = Sx
 Fy  0        0      1       1       1     = 3*W*9.81
 Fz  0        0      0       0       0     = 0
 Mx  0        0      0       0       Lf2   = 3*W*9.81*(Lf1+Lf2-0.5*L)
-My  0        LF2    0       0       0     = Sx*(L-(Lf1+Lf2)+dtailz)
+My  0        LF2    0       0       0     = -Sx*(L-(Lf1+Lf2)+dtailz)
 Mz  0        0      0.5Lf3  -0.5Lf3 0     = Sx*(dlgy+dtaily)
     '''
     a = np.matrix([[1,       1,     0,      0,      0,     ],                     
@@ -58,7 +68,7 @@ Mz  0        0      0.5Lf3  -0.5Lf3 0     = Sx*(dlgy+dtaily)
     b = np.array([[Sx,                     
     3*W*9.81,               
     3*W*9.81*(Lf1+Lf2-0.5*L),      
-    Sx*(L-(Lf1+Lf2)+dtailz),
+    -Sx*(L-(Lf1+Lf2)+dtailz),
     Sx*(dlgy+dtaily),]]).T       
     RLx, FLx, RL1y, RL2y, FLy = solve(a, b)
     RL1x = RL2x = RLx/2.
@@ -145,6 +155,7 @@ def realCentroid(R, ts, floorHeight, tf, hst, wst, tst):
     return (0,Cy)               #Symmetry -> Cx = 0
 
 def shearCenter(booms):
+    raise NotImplementedError
     Cx = 0
     Cy = None
     
@@ -171,8 +182,12 @@ def boomLocations(nBooms,R,addFloor = False, floorHeight = None):
     locations = zip(R*np.sin(angles), R*np.cos(angles))
     return locations
 
+def polygonArea(n, R):
+    return 1./2*n*R**2*np.sin(2*np.pi/n)
+
 if __name__=="__main__":
-    Mx = My = 15
+    Mx = 150000
+    My = 300000
     fh = 1.8
     R = 2.
     booms = boomLocations(36, R, False, fh)
@@ -181,5 +196,22 @@ if __name__=="__main__":
     hst = 0.015
     wst = 0.02
     tst = 0.012
-    for A in structuralAnalysis.boomAreas(Mx, My, booms, R, ts, fh, tf, hst, wst, tst):
-        print A
+    areas, floorAttachment = structuralAnalysis.boomAreas(Mx, My, booms, R, ts, fh, tf, hst, wst, tst)
+    areaBooms = []
+    for i,boom in enumerate(booms):
+        areaBooms.append((areas[i], boom))
+     
+    Sx = 0
+    Sy = 44500.
+    areaBooms = [
+                 (1290.,(-647.,-127.)),
+                 (1936.,(0,-203.)),
+                 (645.,(775.,-101.)),
+                 (645.,(775.,101.)),
+                 (1936.,(0,203.)),
+                 (1290.,(-647.,127.)),]
+    floorAttachment = (1,4)
+    structuralAnalysis.standardShearFlows(areaBooms, Sx, Sy, floorAttachment)
+    
+    Cx, Cy = centroid(areaBooms)
+    Ixx = idealMomentOfInertia("x", areaBooms)

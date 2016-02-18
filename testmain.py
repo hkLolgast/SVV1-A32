@@ -3,7 +3,12 @@ Created on Feb 15, 2016
 
 @author: Rick
 '''
-import unittest
+try:
+    import unittest
+except ImportError:
+    import os
+    os.system("pip install unittest")
+    import unittest
 from main import *
 
 class Testmain(unittest.TestCase):
@@ -53,21 +58,21 @@ class Testmain(unittest.TestCase):
         dtaily  = 4.0
         dlgy    = 1.8
         
-        FfrontxVER = 0.
-        FfrontyVER = 0.
-        Frear1xVER = 0.
+        FfrontxVER = -220779.
+        FfrontyVER = 226856.
+        Frear1xVER = 390779./2
         Frear1yVER = 0.
-        Frear2xVER = 0.
+        Frear2xVER = 390779./2
         Frear2yVER = 0.
         
         (FfrontxACT, FfrontyACT), \
         (Frear1xACT, Frear1yACT), \
         (Frear2xACT, Frear2yACT) = reactionForces(Lf1, Lf2, Lf3, L, R, W, Sx, dtailz, dtaily, dlgy)
         
-        self.fail("Analytical solution not yet available")
+#         self.fail("Analytical solution not yet available")
         for loc in ("front", "rear1", "rear2"):
             for dir in ("x", "y"):
-                self.assertEqual(eval("F"+loc+dir+"ACT"), eval("F"+loc+dir+"VER"))
+                self.assertAlmostEqual(eval("F"+loc+dir+"ACT"), eval("F"+loc+dir+"VER"), delta = 0.05*abs(eval("F"+loc+dir+"ACT")))
 
 if __name__ == "__main__":
     unittest.main()
