@@ -201,17 +201,25 @@ if __name__=="__main__":
     for i,boom in enumerate(booms):
         areaBooms.append((areas[i], boom))
      
-    Sx = 0
-    Sy = 44500.
-    areaBooms = [
-                 (1290.,(-647.,-127.)),
-                 (1936.,(0,-203.)),
-                 (645.,(775.,-101.)),
-                 (645.,(775.,101.)),
-                 (1936.,(0,203.)),
-                 (1290.,(-647.,127.)),]
-    floorAttachment = (1,4)
-    structuralAnalysis.standardShearFlows(areaBooms, Sx, Sy, floorAttachment)
+#     Sx = 0
+#     Sy = 44500.
+#     areaBooms = [
+#                  (1290.,(-647.,-127.)),
+#                  (1936.,(0,-203.)),
+#                  (645.,(775.,-101.)),
+#                  (645.,(775.,101.)),
+#                  (1936.,(0,203.)),
+#                  (1290.,(-647.,127.)),]
+#     floorAttachment = (1,4)
+    Sx = 15000
+    Sy = 30000
+    qs = structuralAnalysis.standardShearFlows(areaBooms, Sx, Sy, floorAttachment)
+    for i,q in enumerate(qs):
+        if i==len(qs)-1:
+            print "floor : %f" % q
+        else:
+            print "%d -> %d : %f" % (i,(i-1)%(len(qs)-1), q)
     
     Cx, Cy = centroid(areaBooms)
     Ixx = idealMomentOfInertia("x", areaBooms)
+    

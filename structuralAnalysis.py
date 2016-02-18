@@ -70,18 +70,29 @@ def standardShearFlows(booms, Sx, Sy, floorAttachment):
         deltaQ[i] = -(Ixx*Sx-Ixy*Sy)/(Ixx*Iyy-Ixy**2)*area*(x-Cx)\
                     -(Iyy*Sy-Ixy*Sy)/(Ixx*Iyy-Ixy**2)*area*(y-Cy)
 
-    attachments = connections(booms, floorAttachment)
+#     attachments = connections(booms, floorAttachment)
     
     #Store all the shear flows.
     #Element at index i gives the shear flow from boom i to boom (i-1)%n
     #Element at index n is the shear flow from attach1 to attach 2
     shearFlows = [0]*(len(booms)+1)
     
+    def calcShearFlow(i):
+        return shearFlows[(i+1)%len(booms)] + deltaQ[i] #Shear flow from previous beam + delta
+    
     shearFlows[len(booms)] = deltaQ[floorAttachment[0]]
-    for i in range(floorAttachment[0],-1,-1):
-        #              q from i+1 to i  + deltaQ
-        shearFlows[i] = shearFlows[i+1] + deltaQ[i]
-#     shearFlows[]
+    for i in range(floorAttachment[0]-1,-1,-1):
+        shearFlows[i] = calcShearFlow(i)
+    
+    for i in range(len(booms)-1,floorAttachment[1]+1,-1):
+        shearFlows[i] = calcShearFlow(i)
+        
+    shearFlows[floorAttachment[1]] = shearFlows[floorAttachment[1]+1]+shearFlows[len(booms)]+deltaQ[floorAttachment[1]]
+    
+    for i in range(floorAttachment[1]-1, floorAttachment[0], -1):
+        shearFlows[i] =calcShearFlow(i)
+        
+    return shearFlows
 
 def connections(booms, floorAttachment):
     '''
