@@ -216,7 +216,7 @@ if __name__=="__main__":
     qs = structuralAnalysis.standardShearFlows(areaBooms, Sx, Sy, floorAttachment)
     for i,q in enumerate(qs):
         if i==len(qs)-1:
-            print "floor : %f" % q
+            print "%d -> %d : %f" % (floorAttachment[0], floorAttachment[1],q)
         else:
             print "%d -> %d : %f" % (i,(i-1)%(len(qs)-1), q)
     

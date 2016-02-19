@@ -84,7 +84,7 @@ def standardShearFlows(booms, Sx, Sy, floorAttachment):
     for i in range(floorAttachment[0]-1,-1,-1):
         shearFlows[i] = calcShearFlow(i)
     
-    for i in range(len(booms)-1,floorAttachment[1]+1,-1):
+    for i in range(len(booms)-1,floorAttachment[1],-1):
         shearFlows[i] = calcShearFlow(i)
         
     shearFlows[floorAttachment[1]] = shearFlows[floorAttachment[1]+1]+shearFlows[len(booms)]+deltaQ[floorAttachment[1]]
