@@ -94,6 +94,32 @@ def standardShearFlows(booms, Sx, Sy, floorAttachment):
         
     return shearFlows
 
+def calcqs0(booms, Sx, Sy, floorAttachment, floorHeight, R):
+    qs = standardShearFlows(booms, Sx, Sy, floorAttachment)
+    
+    #Areas
+    A2 = R**2*np.arccos((R-floorHeight)/R)-(R-floorHeight)*np.sqrt(2*R*floorHeight-floorHeight**2)        #Reference: Wolfram
+    A1 = np.pi*R**2-A2
+    
+    A = np.array([[0,0,0],      #(dtheta/dz)_I=0
+                  [0,0,0],      #(dtheta/dz)_II=0
+                  [2*A1],[2*A2],[Sy]])     #Sum(M) = 0
+    
+    B = np.array([[0],[0],[0]])
+    floorAngle = np.arccos((R-floorHeight)/R)
+    floorLength = R*np.sin(floorAngle)
+    
+    #Calculate moments due to shear flow
+    B[2] = qs[-1]*floorLength*(R-floorHeight)
+    for i,(boomArea1, (x1,y1)) in enumerate(booms):
+        boomArea2, (x2, y2) = booms[(i-1)%len(booms)]
+        d = ((x1-x2)**2+(y1-y2)**2)**0.5
+        midpoint = ((x1+x2)/2,(y1+y2)/2)
+        r = (midpoint[0]**2+midpoint[1]**2)**0.5
+#         print d, r
+        B[2]+=qs[i]*d*r
+    print B         
+
 def connections(booms, floorAttachment):
     '''
     Checks which boom is connected to which
@@ -112,5 +138,7 @@ def connections(booms, floorAttachment):
             attachments[i].append(floorAttachment[0])
     return attachments
     
+
+
 if __name__=="__main__":
     pass

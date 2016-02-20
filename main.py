@@ -154,13 +154,6 @@ def realCentroid(R, ts, floorHeight, tf, hst, wst, tst):
     
     return (0,Cy)               #Symmetry -> Cx = 0
 
-def shearCenter(booms):
-    raise NotImplementedError
-    Cx = 0
-    Cy = None
-    
-    return (Cx, Cy)
-
 def boomLocations(nBooms,R,addFloor = False, floorHeight = None):
     '''
     addFloor: Whether to add two booms at the end of the floor
@@ -190,7 +183,7 @@ if __name__=="__main__":
     My = 300000
     fh = 1.8
     R = 2.
-    booms = boomLocations(36, R, False, fh)
+    booms = boomLocations(36, R, True, fh)
     ts = 0.003
     tf = 0.02
     hst = 0.015
@@ -220,6 +213,7 @@ if __name__=="__main__":
         else:
             print "%d -> %d : %f" % (i,(i-1)%(len(qs)-1), q)
     
-    Cx, Cy = centroid(areaBooms)
-    Ixx = idealMomentOfInertia("x", areaBooms)
-    
+#     Cx, Cy = centroid(areaBooms)
+#     Ixx = idealMomentOfInertia("x", areaBooms)
+#     
+    structuralAnalysis.calcqs0(areaBooms, Sx, Sy, floorAttachment, fh, R)
