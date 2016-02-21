@@ -146,7 +146,7 @@ def shearCenter(booms, Sx, Sy, floorAttachment, floorHeight, R, tf, ts):
     print B
     qs01, qs02, dx, dy = linalg.solve(A,B)
     
-    return dx, dy
+    return dx, dy, qs01, qs02
 
 def connections(booms, floorAttachment):
     '''
