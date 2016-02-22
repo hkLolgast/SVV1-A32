@@ -12,6 +12,18 @@ except ImportError:
 from main import *
 
 class Testmain(unittest.TestCase):
+    def testpolygonArea(self):
+        self.fail("Not implemented")
+
+    def testrealMomentOfInertia(self):
+        self.fail("Not implemented")
+
+    def testboomLocations(self):
+        self.fail("Not implemented")
+
+    def testrealCentroid(self):
+        self.fail("Not implemented")
+
     def testidealMomentOfInertia(self):
         booms = [(5,(3,2))]
         self.assertEqual(idealMomentOfInertia("x", booms), 0.)

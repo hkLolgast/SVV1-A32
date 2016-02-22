@@ -183,16 +183,16 @@ if __name__=="__main__":
     My = 300000
     fh = 1.8
     R = 2.
-    booms = boomLocations(36, R, True, fh)
+    boomLocs = boomLocations(36, R, True, fh)
     ts = 0.003
     tf = 0.02
     hst = 0.015
     wst = 0.02
     tst = 0.012
-    areas, floorAttachment = structuralAnalysis.boomAreas(Mx, My, booms, R, ts, fh, tf, hst, wst, tst)
-    areaBooms = []
-    for i,boom in enumerate(booms):
-        areaBooms.append((areas[i], boom))
+    areas, floorAttachment = structuralAnalysis.boomAreas(Mx, My, boomLocs, R, ts, fh, tf, hst, wst, tst)
+    booms = []
+    for i,boom in enumerate(boomLocs):
+        booms.append((areas[i], boom))
      
 #     Sx = 0
 #     Sy = 44500.
@@ -204,17 +204,15 @@ if __name__=="__main__":
 #                  (1936.,(0,203.)),
 #                  (1290.,(-647.,127.)),]
 #     floorAttachment = (1,4)
-    Sx = 15000
+    Sx = 1.7*10**5
     Sy = 30000
-    qs = structuralAnalysis.standardShearFlows(areaBooms, Sx, Sy, floorAttachment)
+    Mz = Sx*(4-R)
+    qs = structuralAnalysis.totalShearFlow(booms, Sx, Sy, Mz, floorAttachment, fh, R, tf, ts)
     for i,q in enumerate(qs):
         if i==len(qs)-1:
             print "%d -> %d : %f" % (floorAttachment[0], floorAttachment[1],q)
         else:
             print "%d -> %d : %f" % (i,(i-1)%(len(qs)-1), q)
     
-#     Cx, Cy = centroid(areaBooms)
-#     Ixx = idealMomentOfInertia("x", areaBooms)
-#     
-    Csx, Csy, qs01, qs02 = structuralAnalysis.shearCenter(areaBooms, Sx, Sy, floorAttachment, fh, R, tf, ts)
-    print Csx, Csy, qs01, qs02
+    print Mz
+    print (sum(qs[:-1])/(len(qs)-1))*R*2*np.pi*R
