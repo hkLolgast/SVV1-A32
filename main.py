@@ -216,5 +216,5 @@ if __name__=="__main__":
 #     Cx, Cy = centroid(areaBooms)
 #     Ixx = idealMomentOfInertia("x", areaBooms)
 #     
-    Csx, Csy = structuralAnalysis.shearCenter(areaBooms, Sx, Sy, floorAttachment, fh, R, tf, ts)
-    print Csx, Csy
+    Csx, Csy, qs01, qs02 = structuralAnalysis.shearCenter(areaBooms, Sx, Sy, floorAttachment, fh, R, tf, ts)
+    print Csx, Csy, qs01, qs02
