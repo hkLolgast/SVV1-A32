@@ -22,8 +22,8 @@ Fy2 = 1686094.
 # shear and moment diagrams due to forces in y:
 def diagramsy():
     #input data
-    V = []
-    M = []
+    Vy = []
+    My = []
     step = 0.1
     z0 = 0.
     z1 = L-Lf1-Lf2
@@ -35,45 +35,42 @@ def diagramsy():
     int1 = np.arange(z0,z1,step)
     vlocal = -q*int1
     mlocal = -q*int1*int1/2.
-    V = np.append(V,vlocal)
-    M = np.append(M,mlocal)
+    Vy = np.append(Vy,vlocal)
+    My = np.append(My,mlocal)
     
     int2 = np.arange(z1,z2,step)
     vlocal = -q*int2 + Fy2
     mlocal = -q*int2*int2/2. + Fy2*(int2-z1)
-    V = np.append(V,vlocal)
-    M = np.append(M,mlocal)
+    Vy = np.append(Vy,vlocal)
+    My = np.append(My,mlocal)
     
     int3 = np.arange(z2,30.000009,step)
     vlocal = -q*int3 + Fy2 + Fy1
     mlocal = -q*int3*int3/2. + Fy2*(int3-z1) + Fy1*(int3-z2)
-    V = np.append(V,vlocal)
-    M = np.append(M,mlocal)
+    Vy = np.append(Vy,vlocal)
+    My = np.append(My,mlocal)
     
     # finding the max values and their location on the z axis:
-    Vmax = np.amax(abs(V))
-    Vpos = (np.argmax(abs(V)))/10.
-    Mmax = np.amax(abs(M))
-    Mpos = (np.argmax(abs(M)))/10.
+    Vymax = np.amax(abs(Vy))
+    Vypos = (np.argmax(abs(Vy)))*step
+    Mymax = np.amax(abs(My))
+    Mypos = (np.argmax(abs(My)))*step
     
-    print "Vmax =",Vmax,"N", "at z =",Vpos,"m"
-    print "Mmax =",Mmax,"N*m", "at z =",Mpos,"m"
+    print "Vymax =",Vymax,"N", "at z =",Vypos,"m"
+    print "Mymax =",Mymax,"N*m", "at z =",Mypos,"m"
     
     # plotting the diagrams
     x = np.arange(0,z3,step)
-    y1 = V
-    y2 = M
-    plt.plot(x,y1)
-    plt.plot(x,y2)
-    plt.show
+    y1 = Vy
+    y2 = My
+    plt.plot(x,y1,label='shear')
+    plt.plot(x,y2,label='moment')
+    plt.legend()
+    plt.show()
     
     # return output
-    return Vmax, Vpos, Mmax, Mpos
+    return Vy,My, Vymax, Vypos, Mymax, Mypos
   
-def stressfy():
-    # data input:
-    Vmax = diagramsy[0]
-    Mmax = diagramsy[2]
-    # moments, to be completed
+diagramsy()   
 
     

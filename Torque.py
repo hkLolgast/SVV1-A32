@@ -11,7 +11,7 @@ hf = 1.8
 R = 2.0
 ts = 0.003
 tf = 0.02
-T = 344.0
+T = 68000.
 
 def shearstressT():
     # geometrical parameters of the strucutre
@@ -37,6 +37,7 @@ def shearstressT():
     tau1 = q1/ts
     tau2 = q2/ts
     tau12 = (q1-q2)/tf
+    print tau1,tau2,tau12
     return tau1, tau2, tau12
 
 shearstressT()
