@@ -110,8 +110,8 @@ def shearCenter(booms, Sx, Sy, floorAttachment, floorHeight, R, tf, ts):
     #Row 1: 1/(2A1*G)*integral(qs/t*ds over area 1) = 0 (G = constant)
     #Row 2: 1/(2A2*G)*integral(qs/t*ds over area 2) = 0
     # --> integral = 0
-    #Row 3: 2A1*qs01+2A2*qs02+Sy*Cx = integral(qb*d*r)+qf*lf*df
-    #Row 3: 2A1*qs01+2A2*qs02+Sx*Cy = integral(qb*d*r)+qf*lf*df
+    #Row 3: 2A1*qs01+2A2*qs02+Sy*Cx = integral(qb*d*r)-qf*lf*df
+    #Row 3: 2A1*qs01+2A2*qs02+Sx*Cy = integral(qb*d*r)-qf*lf*df
     
     B = np.array([[0],[0],[0],[0]])
     
@@ -121,8 +121,8 @@ def shearCenter(booms, Sx, Sy, floorAttachment, floorHeight, R, tf, ts):
     A[0,1] = A[1,0] = floorLength/tf
     
     #qb goes to the other side
-    B[0] = -1/tf*qs[-1]*floorLength       #Sign convention
-    B[1] =  1/tf*qs[-1]*floorLength
+    B[0] = 1/tf*qs[-1]*floorLength       #Sign convention negates - sign
+    B[1] = 1/tf*qs[-1]*floorLength
     
     #Calculate moments due to shear flow
     B[2] = B[3] = qs[-1]*floorLength*(R-floorHeight)
@@ -134,17 +134,17 @@ def shearCenter(booms, Sx, Sy, floorAttachment, floorHeight, R, tf, ts):
 #         print d, r
         if floorAttachment[0]<i<=floorAttachment[1]:    #lower segment
             A[1,1]+=1/ts*d
-            B[1]+=qs[i]*d/ts
+            B[1]+=-qs[i]*d/ts
         else:
             A[0,0]+=1/ts*d
-            B[0]+=qs[i]*d/ts
-        B[2]+=qs[i]*d*r
-        B[3]+=qs[i]*d*r
+            B[0]+=-qs[i]*d/ts
+        B[2]+=-qs[i]*d*r
+        B[3]+=-qs[i]*d*r
         
     print A
     print "-"
     print B
-    qs01, qs02, dx, dy = linalg.solve(A,B)
+    qs01, qs02, dy, dx = linalg.solve(A,B)
     
     return dx, dy, qs01, qs02
 
