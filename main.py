@@ -206,16 +206,13 @@ if __name__=="__main__":
 #     floorAttachment = (1,4)
     Sx = 1.7*10**5
     Sy = 30000
-    qs = structuralAnalysis.standardShearFlows(booms, Sx, Sy, floorAttachment)
+    Mz = Sx*(4-R)
+    qs = structuralAnalysis.totalShearFlow(booms, Sx, Sy, Mz, floorAttachment, fh, R, tf, ts)
     for i,q in enumerate(qs):
         if i==len(qs)-1:
             print "%d -> %d : %f" % (floorAttachment[0], floorAttachment[1],q)
         else:
             print "%d -> %d : %f" % (i,(i-1)%(len(qs)-1), q)
     
-#     Cx, Cy = centroid(areaBooms)
-#     Ixx = idealMomentOfInertia("x", areaBooms)
-    
-    Mz = 2*Sx
-    qs01, qs02 = structuralAnalysis.calcqs0(booms, Sx, Sy, Mz, floorAttachment, fh, R, tf, ts)
-    print qs01, qs02
+    print Mz
+    print (sum(qs[:-1])/(len(qs)-1))*R*2*np.pi*R

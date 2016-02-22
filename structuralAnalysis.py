@@ -105,7 +105,7 @@ def calcqs0(booms, Sx, Sy, Mz, floorAttachment, floorHeight, R, tf, ts):
     floorLength = R*np.sin(floorAngle)
     
     A = np.array([[0,0],[0,0]])
-    B = np.array([[0],[Mz]])
+    B = np.array([[0],[Mz-qs[-1]*floorLength*(R-floorHeight)]])
     A[0,0] = 1./(2*A2)*floorLength/tf
     A[0,1] =-1./(2*A1)*floorLength/tf
     
@@ -127,6 +127,18 @@ def calcqs0(booms, Sx, Sy, Mz, floorAttachment, floorHeight, R, tf, ts):
         
     qs01, qs02 = linalg.solve(A,B)
     return qs01, qs02
+        
+def totalShearFlow(booms, Sx, Sy, Mz, floorAttachment, fh, R, tf, ts):
+    qs = standardShearFlows(booms, Sx, Sy, floorAttachment)
+    qs01, qs02 = calcqs0(booms, Sx, Sy, Mz, floorAttachment, fh, R, tf, ts)
+    for i in range(len(qs)):
+        if i==len(qs)-1:
+            qs[i] += -qs01+qs02
+        elif floorAttachment[0]<i<=floorAttachment[1]:
+            qs[i] += qs02
+        else:
+            qs[i] += qs01
+    return qs
         
 # def _shearCenter(booms, S, dir, floorAttachment, floorHeight, R, tf, ts):
 #     '''
@@ -214,7 +226,5 @@ def connections(booms, floorAttachment):
             attachments[i].append(floorAttachment[0])
     return attachments
     
-
-
 if __name__=="__main__":
     pass
