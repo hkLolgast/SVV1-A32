@@ -65,15 +65,11 @@ def diagramsy():
     y2 = M
     plt.plot(x,y1)
     plt.plot(x,y2)
-    plt.show
+    plt.show()
     
     # return output
-    return Vmax, Vpos, Mmax, Mpos
+    return V,M, Vmax, Vpos, Mmax, Mpos
   
-def stressfy():
-    # data input:
-    Vmax = diagramsy[0]
-    Mmax = diagramsy[2]
-    # moments, to be completed
+diagramsy()
 
     

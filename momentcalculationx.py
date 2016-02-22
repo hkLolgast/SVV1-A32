@@ -28,4 +28,4 @@ for i in range(1,300):
 
         
 plt.plot(Mx)
-   
+plt.show() 
