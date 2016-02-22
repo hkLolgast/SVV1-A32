@@ -95,58 +95,106 @@ def standardShearFlows(booms, Sx, Sy, floorAttachment):
         
     return shearFlows
 
-def shearCenter(booms, Sx, Sy, floorAttachment, floorHeight, R, tf, ts):
+def calcqs0(booms, Sx, Sy, Mz, floorAttachment, floorHeight, R, tf, ts):
     qs = standardShearFlows(booms, Sx, Sy, floorAttachment)
-    
     #Areas
     A2 = R**2*np.arccos((R-floorHeight)/R)-(R-floorHeight)*np.sqrt(2*R*floorHeight-floorHeight**2)        #Reference: Wolfram
     A1 = np.pi*R**2-A2
     
-    A = np.array([[0,0,0,0],      #(dtheta/dz)_I=0
-                  [0,0,0,0],      #(dtheta/dz)_II=0
-                  [2*A1,2*A2,0,Sy],   #Sum(M) = 0 for Cx
-                  [2*A1,2*A2,Sx,0]])  #Sum(M) = 0 for Cy
-    
-    #Row 1: 1/(2A1*G)*integral(qs/t*ds over area 1) = 0 (G = constant)
-    #Row 2: 1/(2A2*G)*integral(qs/t*ds over area 2) = 0
-    # --> integral = 0
-    #Row 3: 2A1*qs01+2A2*qs02+Sy*Cx = integral(qb*d*r)-qf*lf*df
-    #Row 3: 2A1*qs01+2A2*qs02+Sx*Cy = integral(qb*d*r)-qf*lf*df
-    
-    B = np.array([[0],[0],[0],[0]])
-    
     floorAngle = np.arccos((R-floorHeight)/R)
     floorLength = R*np.sin(floorAngle)
     
-    A[0,1] = A[1,0] = floorLength/tf
+    A = np.array([[0,0],[0,0]])
+    B = np.array([[0],[Mz]])
+    A[0,0] = 1./(2*A2)*floorLength/tf
+    A[0,1] =-1./(2*A1)*floorLength/tf
     
-    #qb goes to the other side
-    B[0] = 1/tf*qs[-1]*floorLength       #Sign convention negates - sign
-    B[1] = 1/tf*qs[-1]*floorLength
-    
-    #Calculate moments due to shear flow
-    B[2] = B[3] = qs[-1]*floorLength*(R-floorHeight)
+    '''
+    A*[[qs0_1],[qs0_2]] = B
+    First row: rate of twist equality
+    Second row: moment equivalence
+    '''
     for i,(boomArea1, (x1,y1)) in enumerate(booms):
         boomArea2, (x2, y2) = booms[(i-1)%len(booms)]
         d = ((x1-x2)**2+(y1-y2)**2)**0.5
-        midpoint = ((x1+x2)/2,(y1+y2)/2)
-        r = (midpoint[0]**2+midpoint[1]**2)**0.5
-#         print d, r
         if floorAttachment[0]<i<=floorAttachment[1]:    #lower segment
-            A[1,1]+=1/ts*d
-            B[1]+=-qs[i]*d/ts
+            A[0,1]-=1./(2*A2)*d/ts
+            B[0]+=1./(2*A2)*d/ts*qs[i]
         else:
-            A[0,0]+=1/ts*d
-            B[0]+=-qs[i]*d/ts
-        B[2]+=-qs[i]*d*r
-        B[3]+=-qs[i]*d*r
+            A[1,0]+=1./(2*A1)*d/ts
+            B[0]-=1./(2*A2)*d/ts*qs[i]
+        B[1]-=qs[i]*d*R
         
-    print A
-    print "-"
-    print B
-    qs01, qs02, dy, dx = linalg.solve(A,B)
-    
-    return dx, dy, qs01, qs02
+    qs01, qs02 = linalg.solve(A,B)
+    return qs01, qs02
+        
+# def _shearCenter(booms, S, dir, floorAttachment, floorHeight, R, tf, ts):
+#     '''
+#     dir: direction of the shear force
+#     '''
+#     if dir=="x":
+#         qs = standardShearFlows(booms, S, 0, floorAttachment)
+#     else:
+#         qs = standardShearFlows(booms, 0, S, floorAttachment)
+#     
+#     #Areas
+#     A2 = R**2*np.arccos((R-floorHeight)/R)-(R-floorHeight)*np.sqrt(2*R*floorHeight-floorHeight**2)        #Reference: Wolfram
+#     A1 = np.pi*R**2-A2
+#     
+# #     A = np.array([[0,0,0,0],      #(dtheta/dz)_I=0
+# #                   [0,0,0,0],      #(dtheta/dz)_II=0
+# #                   [2*A1,2*A2,0,Sy],   #Sum(M) = 0 for Cx
+# #                   [2*A1,2*A2,Sx,0]])  #Sum(M) = 0 for Cy
+#     
+#     A = np.array([[0,0,0],      #(dtheta/dz)_I=0
+#                   [0,0,0],      #(dtheta/dz)_II=0
+#                   [2*A1,2*A2,(-S if dir=="x" else S)]])   #Sum(M) = 0
+#     
+#     #Row 1: 1/(2A1*G)*integral(qs/t*ds over area 1) = 0 (G = constant)
+#     #Row 2: 1/(2A2*G)*integral(qs/t*ds over area 2) = 0
+#     # --> integral = 0
+#     #Row 3: 2A1*qs01+2A2*qs02+Sy*Cx = integral(qb*d*r)-qf*lf*df
+#                         #Row 3: 2A1*qs01+2A2*qs02+Sx*Cy = integral(qb*d*r)-qf*lf*df
+#     
+#     B = np.array([[0],[0],[0]])
+#     
+#     floorAngle = np.arccos((R-floorHeight)/R)
+#     floorLength = R*np.sin(floorAngle)
+# #     print A
+# #     print A[0]
+#     
+#     A[0,1] = A[1,0] = floorLength/tf
+#     
+#     #qb goes to the other side
+#     B[0] = 1/tf*qs[-1]*floorLength       #Sign convention negates - sign
+#     B[1] = 1/tf*qs[-1]*floorLength
+#     
+#     #Calculate moments due to shear flow
+#     B[2] = qs[-1]*floorLength*(R-floorHeight)
+#     for i,(boomArea1, (x1,y1)) in enumerate(booms):
+#         boomArea2, (x2, y2) = booms[(i-1)%len(booms)]
+#         d = ((x1-x2)**2+(y1-y2)**2)**0.5
+#         midpoint = ((x1+x2)/2,(y1+y2)/2)
+#         r = (midpoint[0]**2+midpoint[1]**2)**0.5
+# #         print d, r
+#         if floorAttachment[0]<i<=floorAttachment[1]:    #lower segment
+#             A[1,1]+=1/ts*d
+#             B[1]+=-qs[i]*d/ts
+#         else:
+#             A[0,0]+=1/ts*d
+#             B[0]+=-qs[i]*d/ts
+#         B[2]+=-qs[i]*d*r
+#         
+# #     print A
+# #     print "-"
+# #     print B
+#     qs01, qs02= linalg.solve(A,B)
+#     
+# 
+# def shearCenter(booms, floorAttachment, floorHeight, R, tf, ts):
+#     dy = _shearCenter(booms, 4.2, "x", floorAttachment, floorHeight, R, tf, ts)
+#     dx = _shearCenter(booms, 42, "y", floorAttachment, floorHeight, R, tf, ts)
+#     return dx, dy
 
 def connections(booms, floorAttachment):
     '''
