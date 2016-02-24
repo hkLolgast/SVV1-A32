@@ -189,6 +189,8 @@ if __name__=="__main__":
     hst = 0.015
     wst = 0.02
     tst = 0.012
+    lf = 2*(fh*(2*R-fh))**0.5
+    
     areas, floorAttachment = structuralAnalysis.boomAreas(Mx, My, boomLocs, R, ts, fh, tf, hst, wst, tst)
     booms = []
     for i,boom in enumerate(boomLocs):
@@ -207,7 +209,8 @@ if __name__=="__main__":
     Sx = 1.7*10**5
     Sy = 30000
     Mz = Sx*(4-R)
-    qs = structuralAnalysis.totalShearFlow(booms, Sx, Sy, Mz, floorAttachment, fh, R, tf, ts)
+    
+    qs = structuralAnalysis.totalShearFlow(booms, Sx, Sy, -Mz, floorAttachment, fh, R, tf, ts)
     for i,q in enumerate(qs):
         if i==len(qs)-1:
             print "%d -> %d : %f" % (floorAttachment[0], floorAttachment[1],q)
@@ -215,4 +218,4 @@ if __name__=="__main__":
             print "%d -> %d : %f" % (i,(i-1)%(len(qs)-1), q)
     
     print Mz
-    print (sum(qs[:-1])/(len(qs)-1))*R*2*np.pi*R
+    print (sum(qs[:-1])/(len(qs)-1))*R*2*np.pi*R-qs[-1]*lf*(R-fh)

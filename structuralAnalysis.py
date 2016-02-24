@@ -105,10 +105,13 @@ def calcqs0(booms, Sx, Sy, Mz, floorAttachment, floorHeight, R, tf, ts):
     floorLength = R*np.sin(floorAngle)
     
     A = np.array([[0,0],[0,0]])
-    B = np.array([[0],[Mz-qs[-1]*floorLength*(R-floorHeight)]])
+    B = np.array([[0],
+                  [Mz+qs[-1]*floorLength*(R-floorHeight)]])
     A[0,0] = 1./(2*A2)*floorLength/tf
     A[0,1] =-1./(2*A1)*floorLength/tf
-    
+    A[1,0] = 2*A1
+    A[1,1] = 2*A2
+    v = 0
     '''
     A*[[qs0_1],[qs0_2]] = B
     First row: rate of twist equality
@@ -121,16 +124,21 @@ def calcqs0(booms, Sx, Sy, Mz, floorAttachment, floorHeight, R, tf, ts):
             A[0,1]-=1./(2*A2)*d/ts
             B[0]+=1./(2*A2)*d/ts*qs[i]
         else:
-            A[1,0]+=1./(2*A1)*d/ts
+            A[0,0]+=1./(2*A1)*d/ts
             B[0]-=1./(2*A2)*d/ts*qs[i]
         B[1]-=qs[i]*d*R
         
+    
     qs01, qs02 = linalg.solve(A,B)
+#     print A[1,0]*qs01+A[1,1]*qs02+sum(qs[:-1])/len(qs[:-1])*R*2*np.pi*R-qs[-1]*floorLength*0.2, Mz
     return qs01, qs02
         
 def totalShearFlow(booms, Sx, Sy, Mz, floorAttachment, fh, R, tf, ts):
     qs = standardShearFlows(booms, Sx, Sy, floorAttachment)
     qs01, qs02 = calcqs0(booms, Sx, Sy, Mz, floorAttachment, fh, R, tf, ts)
+    A2 = R**2*np.arccos((R-fh)/R)-(R-fh)*np.sqrt(2*R*fh-fh**2)        #Reference: Wolfram
+    A1 = np.pi*R**2-A2
+#     print qs01, qs02
     for i in range(len(qs)):
         if i==len(qs)-1:
             qs[i] += -qs01+qs02
@@ -139,7 +147,7 @@ def totalShearFlow(booms, Sx, Sy, Mz, floorAttachment, fh, R, tf, ts):
         else:
             qs[i] += qs01
     return qs
-        
+
 # def _shearCenter(booms, S, dir, floorAttachment, floorHeight, R, tf, ts):
 #     '''
 #     dir: direction of the shear force
