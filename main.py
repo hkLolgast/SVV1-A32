@@ -196,7 +196,7 @@ if __name__=="__main__":
     
     Vx, Mx = forces_x.diagramsx()[:2]
     Vy, My = forces_y.diagramsy()[:2]
-    results = np.zeros(shape=(len(Vx)*(len(boomLocs)+1),4))
+    results = np.zeros(shape=(len(Vx)*(len(boomLocs)+1),5))
     n = 0
     for el in range(len(Vx)):
         Sx, mx = Vx[el], Mx[el]
