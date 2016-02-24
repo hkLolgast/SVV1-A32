@@ -205,7 +205,7 @@ if __name__=="__main__":
     Vx, Mx = forces_x.diagramsx()[:2]
     Vy, My = forces_y.diagramsy()[:2]
     qs0, T = Torque.shearstressT()
-    results = np.zeros(shape=(len(Vx)*(len(boomLocs)+1),5))
+    results = np.zeros(shape=(len(Vx)*(len(boomLocs)+1),6))
     n = 0
     Ff, Fr1, Fr2 = reactionForces(Lf1, Lf2, Lf3, L, R, W, Sx, dtailz, dtaily, dlgy)
     for el in range(len(Vx)):
@@ -227,14 +227,9 @@ if __name__=="__main__":
         for i, (x1,y1) in enumerate(boomLocs):
             (x2, y2) = boomLocs[(i-1)%len(booms)]
             (x,y) = ((x1+x2)/2,(y1+y2)/2)
-#             if np.isnan(qs[i]):
-#                 qs[i] = 0.
-            results[n] = [x,y,z,qs[i], qs[i]/ts]
+            results[n] = [x,y,z,qs[i], qs[i]/ts, qs[i]/ts*3**0.5]   #x,y,z,qs, tau, von mises
             n+=1
-#         if np.isnan(qs[-1]):
-#             qs[-1] = 0
-        results[n] = [0, fh-R, z, qs[-1], qs[-1]/tf]
+        results[n] = [0, fh-R, z, qs[-1], qs[-1]/tf, qs[-1]/tf*3**0.5]  #x,y,z,qs, tau, von mises
         n+=1
     v = results[np.argmax(results[:,4])]
     print v
-#     print v[3], type(v[3]), np.nan, v[3]==np.nan, v[3] is np.nan, np.isnan(v[3])
