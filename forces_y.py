@@ -63,14 +63,16 @@ def diagramsy():
     x = np.arange(0,z3,step)
     y1 = Vy
     y2 = My
-    plt.plot(x,y1,label='shear')
-    plt.plot(x,y2,label='moment')
-    plt.legend()
-    plt.show()
+    if __name__=="__main__":
+        plt.plot(x,y1,label='shear')
+        plt.plot(x,y2,label='moment')
+        plt.legend()
+        plt.show()
     
     # return output
     return Vy,My, Vymax, Vypos, Mymax, Mypos
   
-diagramsy()   
+if __name__=="__main__":
+    diagramsy()   
 
     

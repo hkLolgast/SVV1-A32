@@ -160,7 +160,28 @@ def shearstressT():
     print shearT
     return shearT
     
+<<<<<<< HEAD
 shearstressT()
 
 
+=======
+    # using equality of rates of twist and simplifying:
+    term1 = s1/(A1*ts) + s12/(A1*tf) + s12/(A2*tf)
+    term2 = s2/(A2*ts) + s12/(A2*tf) + s12/(A1*tf)
+    
+    # solving for q1 and q2
+    a = np.array([[term1,-term2], [2*A1,2*A2]])
+    b = np.array([0,T])
+    x = np.linalg.solve(a, b)
+    q1 = x[0]
+    q2 = x[1]
+    tau1 = q1/ts
+    tau2 = q2/ts
+    tau12 = (q1-q2)/tf
+    print tau1,tau2,tau12
+    return tau1, tau2, tau12
+
+if __name__=="__main__":
+    shearstressT()
+>>>>>>> 8f66914f5f7920f76f41c00803533a6e166c154d
     

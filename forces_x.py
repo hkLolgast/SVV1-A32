@@ -62,12 +62,14 @@ def diagramsx():
     x = np.arange(0,z3,step)
     y1 = Vx
     y2 = Mx
-    plt.plot(x,y1,label='shear')
-    plt.plot(x,y2,label='moment')
-    plt.legend()
-    plt.show()
+    if __name__=="__main__":
+        plt.plot(x,y1,label='shear')
+        plt.plot(x,y2,label='moment')
+        plt.legend()
+        plt.show()
     
     # return output
     return Vx, Mx, Vxmax, Vxpos, Mxmax, Mxpos
   
-diagramsx() 
+if __name__=="__main__":
+    diagramsx() 
