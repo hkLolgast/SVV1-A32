@@ -216,14 +216,14 @@ if __name__=="__main__":
             (x,y) = ((x1+x2)/2,(y1+y2)/2)
             if np.isnan(qs[i]):
                 qs[i] = 0.
-            results[n] = [x,y,z,qs[i]]
+            results[n] = [x,y,z,qs[i], qs[i]/ts]
 #             if x==0. and y==-0.2 and el==len(Vx)-1:
 #                 print qs[i], results, np.isnan(qs[i])
             n+=1
         if np.isnan(qs[-1]):
             qs[-1] = 0
-        results[n] = [0, fh-R, z, qs[-1]]
+        results[n] = [0, fh-R, z, qs[-1], qs[-1]/tf]
         n+=1
-    v = results[np.argmax(results[:,3])]
+    v = results[np.argmax(results[:,4])]
     print v
 #     print v[3], type(v[3]), np.nan, v[3]==np.nan, v[3] is np.nan, np.isnan(v[3])
