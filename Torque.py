@@ -25,7 +25,7 @@ Lf3 = 5.2
 W = 65000.0
 Sx = 170000.0
 dtailz = 2.8
-dtaily = 4.0
+dtaily = 5.0
 dlgy = 1.8
 T = Sx*(dlgy+dtaily)
 
@@ -100,8 +100,8 @@ def shearstressT():
     
     Fx1 = forces[0][0]
     Fx2 = forces[1][0] + forces[2][0]
-    FyL = forces[2][1]
-    FyR = forces[1][1]
+    FyR = forces[2][1]
+    FyL = forces[1][1]
     
     a = np.array([[1,1,Sx],[0,1,-Fx2],[1,0,-Fx1]])
     b = np.array([Sx*(dlgy+dtailz),  FyL*Lf3*0.5 - FyR*Lf3*0.5,0])
@@ -125,7 +125,7 @@ def shearstressT():
         plt.show()
     
     shearT = []
-    
+    torques = (T, T-T2, T-T2-T1)
     for i in range(3):
         T = Sx*(dlgy+dtailz-dy)
         if i==1:
@@ -158,7 +158,7 @@ def shearstressT():
         tau12 = (q1-q2)/tf
         shearT.append((tau1,tau2,tau12))
     print shearT
-    return shearT
+    return shearT, torques
 
 if __name__=="__main__":
     shearstressT()
