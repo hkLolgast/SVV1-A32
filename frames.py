@@ -16,6 +16,7 @@ Fy1 = 226856.0
 Fy2 = 1686094.0
 A = np.pi*R*R
 n = 100
+dlgy = 1.8
 
 # moments of inertia
 Ixx = np.pi*R*R*R*ts
@@ -30,11 +31,11 @@ part12 = - Fx2/Ixx*ts*(R*R*np.sin(interval))
 part22 = - Fy2/Iyy*ts*(R*R*np.cos(interval))
 
 qb1 =  part11 + part21
-q01 = Fx1*R/(2*A)
+q01 = Fx1*(R+dlgy)/(2*A)
 qtot1 = qb1 - q01
 
 qb2 = part12 + part22
-q02 = Fx2*R/(2*A)
+q02 = Fx2*(dlgy+R)/(2*A)
 qtot2 = qb2 - q02
 
 plt.plot(interval, qtot1, label='frame 1')
@@ -42,9 +43,9 @@ plt.plot(interval, qtot2, label='frame 2')
 plt.legend()
 plt.show()
 
-ax = plt.subplot(111, projection='polar')
-ax.plot(interval, qtot1, label='frame 1')
-ax.plot(interval, qtot2, label='frame 2')
-ax.grid(True)
-plt.legend()
-plt.show()
+#ax = plt.subplot(111, projection='polar')
+#ax.plot(interval, qtot1, label='frame 1')
+#ax.plot(interval, qtot2, label='frame 2')
+#ax.grid(True)
+#plt.legend()
+#plt.show()
