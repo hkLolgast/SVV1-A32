@@ -61,7 +61,7 @@ Fy  0        0      1       1       1     = 3*W*9.81
 Fz  0        0      0       0       0     = 0
 Mx  0        0      0       0       Lf2   = 3*W*9.81*(Lf1+Lf2-0.5*L)
 My  0        LF2    0       0       0     = -Sx*(L-(Lf1+Lf2)+dtailz)
-Mz  0        0      0.5Lf3  -0.5Lf3 0     = Sx*(dlgy+dtaily)
+Mz  0        0      -0.5Lf3 0.5Lf3  0     = Sx*(dlgy+dtaily)
     '''
     a = np.matrix([[1,       1,     0,      0,      0,     ],                     
                    [0,       0,     1,      1,      1,     ],  
@@ -193,37 +193,48 @@ if __name__=="__main__":
     tst = 0.012
     lf = 2*(fh*(2*R-fh))**0.5
     L = 30.
+    Lf1 = 4.
+    Lf2 = 12.5
+    Lf3 = 5.2
+    W = 65000.
+    Sx = 1.7*10**5
+    dtailz = 2.8
+    dtaily = 5.0
+    dlgy = 1.8
     
     Vx, Mx = forces_x.diagramsx()[:2]
     Vy, My = forces_y.diagramsy()[:2]
-    results = np.zeros(shape=(len(Vx)*(len(boomLocs)+1),4))
+    qs0, T = Torque.shearstressT()
+    results = np.zeros(shape=(len(Vx)*(len(boomLocs)+1),5))
     n = 0
+    Ff, Fr1, Fr2 = reactionForces(Lf1, Lf2, Lf3, L, R, W, Sx, dtailz, dtaily, dlgy)
     for el in range(len(Vx)):
         Sx, mx = Vx[el], Mx[el]
         Sy, my = Vy[el], My[el]
         z = L*el/len(Vx)
-        Mz = 1.7*10**5
+        if z<L-Lf1-Lf2:
+            Mz = T[0]
+        elif z<L-Lf1:
+            Mz = T[1]
+        else:
+            Mz = T[2]
         areas, floorAttachment = structuralAnalysis.boomAreas(mx, my, boomLocs, R, ts, fh, tf, hst, wst, tst)
-#         print areas
         booms = []
         for i,boom in enumerate(boomLocs):
             booms.append((areas[i], boom))
     
-#         print booms, Sx, Sy, Mz, floorAttachment, fh, R, tf, ts
         qs = structuralAnalysis.totalShearFlow(booms, Sx, Sy, -Mz, floorAttachment, fh, R, tf, ts)
         for i, (x1,y1) in enumerate(boomLocs):
             (x2, y2) = boomLocs[(i-1)%len(booms)]
             (x,y) = ((x1+x2)/2,(y1+y2)/2)
-            if np.isnan(qs[i]):
-                qs[i] = 0.
-            results[n] = [x,y,z,qs[i]]
-#             if x==0. and y==-0.2 and el==len(Vx)-1:
-#                 print qs[i], results, np.isnan(qs[i])
+#             if np.isnan(qs[i]):
+#                 qs[i] = 0.
+            results[n] = [x,y,z,qs[i], qs[i]/ts]
             n+=1
-        if np.isnan(qs[-1]):
-            qs[-1] = 0
-        results[n] = [0, fh-R, z, qs[-1]]
+#         if np.isnan(qs[-1]):
+#             qs[-1] = 0
+        results[n] = [0, fh-R, z, qs[-1], qs[-1]/tf]
         n+=1
-    v = results[np.argmax(results[:,3])]
+    v = results[np.argmax(results[:,4])]
     print v
 #     print v[3], type(v[3]), np.nan, v[3]==np.nan, v[3] is np.nan, np.isnan(v[3])
