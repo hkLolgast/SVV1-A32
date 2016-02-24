@@ -102,8 +102,7 @@ def calcqs0(booms, Sx, Sy, Mz, floorAttachment, floorHeight, R, tf, ts):
     A1 = np.pi*R**2-A2
     
     floorAngle = np.arccos((R-floorHeight)/R)
-    floorLength = R*np.sin(floorAngle)
-    
+    floorLength = R*np.sin(floorAngle)    
     A = np.array([[0,0],[0,0]])
     B = np.array([[0],
                   [Mz+qs[-1]*floorLength*(R-floorHeight)]])
@@ -129,7 +128,7 @@ def calcqs0(booms, Sx, Sy, Mz, floorAttachment, floorHeight, R, tf, ts):
         B[1]-=qs[i]*d*R
         
     
-    qs01, qs02 = linalg.solve(A,B)
+    [qs01, qs02] = linalg.solve(A,B)
 #     print A[1,0]*qs01+A[1,1]*qs02+sum(qs[:-1])/len(qs[:-1])*R*2*np.pi*R-qs[-1]*floorLength*0.2, Mz
     return qs01, qs02
         

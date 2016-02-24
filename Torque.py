@@ -40,5 +40,6 @@ def shearstressT():
     print tau1,tau2,tau12
     return tau1, tau2, tau12
 
-shearstressT()
+if __name__=="__main__":
+    shearstressT()
     

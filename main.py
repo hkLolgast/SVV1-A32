@@ -21,7 +21,11 @@ except ImportError:
     import os
     os.system("pip install matplotlib")
     import matplotlib.pyplot as plt
+
 import structuralAnalysis
+import forces_x, forces_y, Torque
+
+np.set_printoptions(edgeitems=10)
 
 def centroid(objects):
     '''
@@ -70,12 +74,12 @@ Mz  0        0      0.5Lf3  -0.5Lf3 0     = Sx*(dlgy+dtaily)
     3*W*9.81*(Lf1+Lf2-0.5*L),      
     -Sx*(L-(Lf1+Lf2)+dtailz),
     Sx*(dlgy+dtaily),]]).T       
-    RLx, FLx, RL1y, RL2y, FLy = solve(a, b)
+    [RLx, FLx, RL1y, RL2y, FLy] = solve(a, b)
     RL1x = RL2x = RLx/2.
     
-    Ffront = (FLx[0], FLy[0])
-    Frear1 = (RL1x[0], RL1y[0])
-    Frear2 = (RL2x[0], RL2y[0])
+    Ffront = (FLx, FLy)
+    Frear1 = (RL1x, RL1y)
+    Frear2 = (RL2x, RL2y)
     
     return [Ffront, Frear1, Frear2]
 
@@ -179,8 +183,6 @@ def polygonArea(n, R):
     return 1./2*n*R**2*np.sin(2*np.pi/n)
 
 if __name__=="__main__":
-    Mx = 150000
-    My = 300000
     fh = 1.8
     R = 2.
     boomLocs = boomLocations(36, R, True, fh)
@@ -190,32 +192,38 @@ if __name__=="__main__":
     wst = 0.02
     tst = 0.012
     lf = 2*(fh*(2*R-fh))**0.5
+    L = 30.
     
-    areas, floorAttachment = structuralAnalysis.boomAreas(Mx, My, boomLocs, R, ts, fh, tf, hst, wst, tst)
-    booms = []
-    for i,boom in enumerate(boomLocs):
-        booms.append((areas[i], boom))
-     
-#     Sx = 0
-#     Sy = 44500.
-#     areaBooms = [
-#                  (1290.,(-647.,-127.)),
-#                  (1936.,(0,-203.)),
-#                  (645.,(775.,-101.)),
-#                  (645.,(775.,101.)),
-#                  (1936.,(0,203.)),
-#                  (1290.,(-647.,127.)),]
-#     floorAttachment = (1,4)
-    Sx = 1.7*10**5
-    Sy = 30000
-    Mz = Sx*(4-R)
+    Vx, Mx = forces_x.diagramsx()[:2]
+    Vy, My = forces_y.diagramsy()[:2]
+    results = np.zeros(shape=(len(Vx)*(len(boomLocs)+1),4))
+    n = 0
+    for el in range(len(Vx)):
+        Sx, mx = Vx[el], Mx[el]
+        Sy, my = Vy[el], My[el]
+        z = L*el/len(Vx)
+        Mz = 1.7*10**5
+        areas, floorAttachment = structuralAnalysis.boomAreas(mx, my, boomLocs, R, ts, fh, tf, hst, wst, tst)
+#         print areas
+        booms = []
+        for i,boom in enumerate(boomLocs):
+            booms.append((areas[i], boom))
     
-    qs = structuralAnalysis.totalShearFlow(booms, Sx, Sy, -Mz, floorAttachment, fh, R, tf, ts)
-    for i,q in enumerate(qs):
-        if i==len(qs)-1:
-            print "%d -> %d : %f" % (floorAttachment[0], floorAttachment[1],q)
-        else:
-            print "%d -> %d : %f" % (i,(i-1)%(len(qs)-1), q)
-    
-    print Mz
-    print (sum(qs[:-1])/(len(qs)-1))*R*2*np.pi*R-qs[-1]*lf*(R-fh)
+#         print booms, Sx, Sy, Mz, floorAttachment, fh, R, tf, ts
+        qs = structuralAnalysis.totalShearFlow(booms, Sx, Sy, -Mz, floorAttachment, fh, R, tf, ts)
+        for i, (x1,y1) in enumerate(boomLocs):
+            (x2, y2) = boomLocs[(i-1)%len(booms)]
+            (x,y) = ((x1+x2)/2,(y1+y2)/2)
+            if np.isnan(qs[i]):
+                qs[i] = 0.
+            results[n] = [x,y,z,qs[i]]
+#             if x==0. and y==-0.2 and el==len(Vx)-1:
+#                 print qs[i], results, np.isnan(qs[i])
+            n+=1
+        if np.isnan(qs[-1]):
+            qs[-1] = 0
+        results[n] = [0, fh-R, z, qs[-1]]
+        n+=1
+    v = results[np.argmax(results[:,3])]
+    print v
+#     print v[3], type(v[3]), np.nan, v[3]==np.nan, v[3] is np.nan, np.isnan(v[3])
