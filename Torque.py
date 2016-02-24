@@ -25,7 +25,7 @@ Lf3 = 5.2
 W = 65000.0
 Sx = 170000.0
 dtailz = 2.8
-dtaily = 4.0
+dtaily = 5.0
 dlgy = 1.8
 T = Sx*(dlgy+dtaily)
 
