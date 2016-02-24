@@ -7,16 +7,30 @@ Created on Mon Feb 22 14:22:48 2016
 
 import numpy as np
 import matplotlib.pyplot as plt
+import main as mn
 #import structuralAnalysis as sa
 
 # input data
-L = 30.0
+hf = 1.8
+R = 2.0
+ts = 0.003
+tf = 0.02
+hst = 0.015
+wst = 0.02
+tst = 0.0012
+L = 30.
 Lf1 = 4.0
 Lf2 = 12.5
 Lf3 = 5.2
-Fx1 = 221680.
-Fx2 = -391680.
-Sx = 1.7*(10**5)
+W = 65000.0
+Sx = 170000.0
+dtailz = 2.8
+dtaily = 5.0
+dlgy = 1.8
+
+forces = mn.reactionForces(Lf1, Lf2, Lf3, L, R, W, Sx, dtailz, dtaily, dlgy)
+Fx1 = forces[0][0]
+Fx2 = forces[1][0] + forces[2][0]
 
 # shear and moment diagrams due to forces in y:
 def diagramsx():
