@@ -19,7 +19,17 @@ class Testmain(unittest.TestCase):
         self.assertAlmostEqual(A, np.pi*42*42, places=1)          #For n->inf the result will approximate a circle
 
     def testrealMomentOfInertia(self):
-        self.fail("Not implemented")
+        fh = 1.8
+        R = 2.
+        ts = 0.003
+        tf = 0.02
+        hst = 0.015
+        wst = 0.02
+        tst = 0.012
+        Ixx = realMomentOfInertia("x", R, ts, fh, tf, hst, wst, tst)
+        Iyy = realMomentOfInertia("y", R, ts, fh, tf, hst, wst, tst)
+        self.assertAlmostEqual(Ixx, 0.1018,delta=abs(0.05*Ixx))
+        self.assertAlmostEqual(Iyy, 0.2072,delta=abs(0.05*Iyy))
 
     def testboomLocations(self):
         boomLocs = boomLocations(36, 2., True, 1.8)
@@ -33,17 +43,17 @@ class Testmain(unittest.TestCase):
                 n+=1
 
     def testrealCentroid(self):
-        R = 2
-        ts = 0.003
         fh = 1.8
+        R = 2.
+        ts = 0.003
         tf = 0.02
         hst = 0.015
-        tst = 0.0012
         wst = 0.02
+        tst = 0.012
         Cx, Cy = realCentroid(R, ts, fh, tf, hst, wst, tst)
-        expX, expY = (0,9001)
+        expX, expY = (0,1.8772-R)
         self.assertAlmostEqual(Cx, expX, 3)
-        self.assertAlmostEqual(Cy, expY, 3)
+        self.assertAlmostEqual(Cy, expY, delta=abs(0.03*Cy))
             
     def testidealMomentOfInertia(self):
         booms = [(5,(3,2))]
@@ -91,23 +101,22 @@ class Testmain(unittest.TestCase):
         dtaily  = 4.0
         dlgy    = 1.8
         
-        FfrontxVER = -220779.
-        FfrontyVER = 226856.
-        Frear1xVER = 390779./2
-        Frear1yVER = 0.
-        Frear2xVER = 390779./2
-        Frear2yVER = 0.
+        FfrontxVER = -221680.
+        FfrontyVER = 229554.
+        FrearxVER = 391680.
+        FrearyVER = 1683396.
         
         (FfrontxACT, FfrontyACT), \
         (Frear1xACT, Frear1yACT), \
         (Frear2xACT, Frear2yACT) = reactionForces(Lf1, Lf2, Lf3, L, R, W, Sx, dtailz, dtaily, dlgy)
         
-        self.assertAlmostEqual(FfrontyACT+Frear1yACT+Frear2yACT, 0, places=1, msg = "No force equilibrium in y")
-        self.assertAlmostEqual(FfrontxACT+Frear1xACT+Frear2xACT, 0, places=1, msg = "No force equilibrium in x")
-#         self.fail("Analytical solution not yet available")
-        for loc in ("front", "rear1", "rear2"):
-            for dir in ("x", "y"):
-                self.assertAlmostEqual(eval("F"+loc+dir+"ACT"), eval("F"+loc+dir+"VER"), delta = 0.05*abs(eval("F"+loc+dir+"ACT")))
+        self.assertAlmostEqual(FfrontyACT+Frear1yACT+Frear2yACT, W*3*9.81, places=1, msg = "No force equilibrium in y")
+        self.assertAlmostEqual(FfrontxACT+Frear1xACT+Frear2xACT, Sx, places=1, msg = "No force equilibrium in x")
+        self.assertAlmostEqual(FfrontxACT, FfrontxVER, delta=abs(0.05*FfrontxVER))
+        self.assertAlmostEqual(FfrontyACT, FfrontyVER, delta=abs(0.05*FfrontyVER))
+        self.assertAlmostEqual(Frear1xACT+Frear2xACT, FrearxVER, delta=abs(0.05*FrearxVER))
+        self.assertAlmostEqual(Frear1yACT+Frear2yACT, FrearyVER, delta=abs(0.05*FrearyVER))
+        
 
 if __name__ == "__main__":
     unittest.main()

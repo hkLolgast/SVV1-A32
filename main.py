@@ -78,10 +78,9 @@ Mz  0        0      -0.5Lf3 0.5Lf3  0     = Sx*(dlgy+dtaily)
     Sx*(dlgy+dtaily),]]).T       
     [RLx, FLx, RL1y, RL2y, FLy] = solve(a, b)
     RL1x = RL2x = RLx/2.
-    
-    Ffront = (FLx, FLy)
-    Frear1 = (RL1x, RL1y)
-    Frear2 = (RL2x, RL2y)
+    Ffront = (FLx[0], FLy[0])
+    Frear1 = (RL1x[0], RL1y[0])
+    Frear2 = (RL2x[0], RL2y[0])
     
     return [Ffront, Frear1, Frear2]
 
@@ -243,4 +242,4 @@ if __name__=="__main__":
     y = results[:,1]
     z = results[:,2]
     S = ax.scatter(x,y,z, c = results[:,5])
-    plt.show()
+#     plt.show()
