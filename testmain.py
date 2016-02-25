@@ -13,17 +13,38 @@ from main import *
 
 class Testmain(unittest.TestCase):
     def testpolygonArea(self):
-        self.fail("Not implemented")
+        A = polygonArea(4., 1.)
+        self.assertEqual(A,2.)      #Note that R is actually the distance from the center to a corner
+        A = polygonArea(9001.,42.)
+        self.assertAlmostEqual(A, np.pi*42*42, places=1)          #For n->inf the result will approximate a circle
 
     def testrealMomentOfInertia(self):
         self.fail("Not implemented")
 
     def testboomLocations(self):
-        self.fail("Not implemented")
+        boomLocs = boomLocations(36, 2., True, 1.8)
+        n = 0
+        for (x,y) in boomLocs:
+            expX, expY = 2*np.sin(n*2*np.pi/36), 2*np.cos(n*2*np.pi/36)
+            if abs(expX-x)>0.001 or abs(expY-y)>0.001:
+                self.assertAlmostEqual(y, -0.2, \
+                                       msg="Location was ({x}, {y}), expected ({expX}, {expY}) or y=-0.2".format(x=x,y=y,expX=expX,expY=expY))         #Floor attachment
+            else:
+                n+=1
 
     def testrealCentroid(self):
-        self.fail("Not implemented")
-
+        R = 2
+        ts = 0.003
+        fh = 1.8
+        tf = 0.02
+        hst = 0.015
+        tst = 0.0012
+        wst = 0.02
+        Cx, Cy = realCentroid(R, ts, fh, tf, hst, wst, tst)
+        expX, expY = (0,9001)
+        self.assertAlmostEqual(Cx, expX, 3)
+        self.assertAlmostEqual(Cy, expY, 3)
+            
     def testidealMomentOfInertia(self):
         booms = [(5,(3,2))]
         self.assertEqual(idealMomentOfInertia("x", booms), 0.)

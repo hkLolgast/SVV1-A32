@@ -155,9 +155,9 @@ def realCentroid(R, ts, floorHeight, tf, hst, wst, tst):
     for (x,y) in boomLocations(36, R, False, floorHeight):
         sumAd+=stiffenerArea*y
         sumA +=stiffenerArea
-        
-    Cy = sumAd/sumA
     
+    
+    Cy = sumAd/sumA
     return (0,Cy)               #Symmetry -> Cx = 0
 
 def boomLocations(nBooms,R,addFloor = False, floorHeight = None):
@@ -203,6 +203,7 @@ if __name__=="__main__":
     dtailz = 2.8
     dtaily = 5.0
     dlgy = 1.8
+    
     
     Vx, Mx = forces_x.diagramsx()[:2]
     Vy, My = forces_y.diagramsy()[:2]

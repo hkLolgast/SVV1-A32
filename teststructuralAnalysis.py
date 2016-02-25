@@ -63,12 +63,29 @@ class TeststructuralAnalysis(unittest.TestCase):
     def testcalcqs0(self):
         '''
         The qs0 calculation was made with several very specific parameters which does not allow for easy unittesting.
-        Instead, the results have been checked for moment equivalence and  rate of twist equality.
+        Instead, the results have been checked for moment equivalence and  rate of twist equality by hand.
         '''
         pass
 
     def testboomAreas(self):
-        self.fail("Not implemented")
+        #Test case from Lecture 9, but with constant thicknesses
+        boomLocs = [(200.,600.),
+                    (-200.,600.),
+                    (-150.,0.),
+                    (-100.,-600.),
+                    (100.,-600.),
+                    (150.,0.),]
+        booms, attachment = boomAreas(0, 9001, boomLocs, 1, 1, 1, 1, 1, 1, 1)
+        expected = [600./6*(2+150./200)+400./6*(2-1),
+                    600./6*(2+150./200)+400./6*(2-1),
+                    600./6*(2+100./150)+600./6*(2+200./150)+300./6*(2-1),
+                    600./6*(2+150./100)+200./6*(2-1),
+                    600./6*(2+150./100)+200./6*(2-1),
+                    600./6*(2+100./150)+600./6*(2+200./150)+300./6*(2-1),]
+        for i, A in enumerate(booms):
+            self.assertAlmostEqual(A, expected[i], delta = abs(0.005*A))
+        self.assertListEqual(sorted(attachment), [2,5])
+        
 
     def teststandardShearFlows(self):
         flows = standardShearFlows(self.booms, 0, 44500, self.floorAttachment)
