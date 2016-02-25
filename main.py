@@ -21,6 +21,8 @@ except ImportError:
     import os
     os.system("pip install matplotlib")
     import matplotlib.pyplot as plt
+from matplotlib import cm
+
 
 import structuralAnalysis
 import forces_x, forces_y, Torque
@@ -233,3 +235,11 @@ if __name__=="__main__":
         n+=1
     v = results[np.argmax(results[:,4])]
     print v
+    fig = plt.figure()
+    from mpl_toolkits.mplot3d import Axes3D
+    ax = fig.gca(projection="3d")
+    x = results[:,0]
+    y = results[:,1]
+    z = results[:,2]
+    S = ax.scatter(x,y,z, c = results[:,5])
+    plt.show()

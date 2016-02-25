@@ -157,7 +157,6 @@ def shearstressT():
         tau2 = q2/ts
         tau12 = (q1-q2)/tf
         shearT.append((tau1,tau2,tau12))
-    print shearT
     return shearT, torques
 
 if __name__=="__main__":

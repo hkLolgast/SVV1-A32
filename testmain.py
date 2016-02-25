@@ -81,6 +81,8 @@ class Testmain(unittest.TestCase):
         (Frear1xACT, Frear1yACT), \
         (Frear2xACT, Frear2yACT) = reactionForces(Lf1, Lf2, Lf3, L, R, W, Sx, dtailz, dtaily, dlgy)
         
+        self.assertAlmostEqual(FfrontyACT+Frear1yACT+Frear2yACT, 0, places=1, msg = "No force equilibrium in y")
+        self.assertAlmostEqual(FfrontxACT+Frear1xACT+Frear2xACT, 0, places=1, msg = "No force equilibrium in x")
 #         self.fail("Analytical solution not yet available")
         for loc in ("front", "rear1", "rear2"):
             for dir in ("x", "y"):

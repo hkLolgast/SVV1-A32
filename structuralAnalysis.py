@@ -84,8 +84,7 @@ def standardShearFlows(booms, Sx, Sy, floorAttachment):
     #Element at index n is the shear flow from attach1 to attach 2
     shearFlows = [0]*(len(booms)+1)
     
-    def calcShearFlow(i):
-        return shearFlows[(i+1)%len(booms)] + deltaQ[i] #Shear flow from previous beam + delta
+    calcShearFlow = lambda i: shearFlows[(i+1)%len(booms)] + deltaQ[i] #Shear flow from previous beam + delta
     
     shearFlows[len(booms)] = deltaQ[floorAttachment[0]]
     for i in range(floorAttachment[0]-1,-1,-1):
@@ -97,7 +96,7 @@ def standardShearFlows(booms, Sx, Sy, floorAttachment):
     shearFlows[floorAttachment[1]] = shearFlows[floorAttachment[1]+1]+shearFlows[len(booms)]+deltaQ[floorAttachment[1]]
     
     for i in range(floorAttachment[1]-1, floorAttachment[0], -1):
-        shearFlows[i] =calcShearFlow(i)
+        shearFlows[i] = calcShearFlow(i)
         
     return shearFlows
 
@@ -116,7 +115,7 @@ def calcqs0(booms, Sx, Sy, Mz, floorAttachment, floorHeight, R, tf, ts):
     A[0,1] =-1./(2*A1)*floorLength/tf
     A[1,0] = 2*A1
     A[1,1] = 2*A2
-    v = 0
+    
     '''
     A*[[qs0_1],[qs0_2]] = B
     First row: rate of twist equality
@@ -141,9 +140,7 @@ def calcqs0(booms, Sx, Sy, Mz, floorAttachment, floorHeight, R, tf, ts):
 def totalShearFlow(booms, Sx, Sy, Mz, floorAttachment, fh, R, tf, ts):
     qs = standardShearFlows(booms, Sx, Sy, floorAttachment)
     qs01, qs02 = calcqs0(booms, Sx, Sy, Mz, floorAttachment, fh, R, tf, ts)
-    A2 = R**2*np.arccos((R-fh)/R)-(R-fh)*np.sqrt(2*R*fh-fh**2)        #Reference: Wolfram
-    A1 = np.pi*R**2-A2
-#     print qs01, qs02
+    
     for i in range(len(qs)):
         if i==len(qs)-1:
             qs[i] += -qs01+qs02
