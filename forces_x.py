@@ -28,12 +28,13 @@ dtailz = 2.8
 dtaily = 5.0
 dlgy = 1.8
 
-forces = mn.reactionForces(Lf1, Lf2, Lf3, L, R, W, Sx, dtailz, dtaily, dlgy)
-Fx1 = forces[0][0]
-Fx2 = forces[1][0] + forces[2][0]
-
 # shear and moment diagrams due to forces in y:
 def diagramsx():
+    
+    forces = mn.reactionForces(Lf1, Lf2, Lf3, L, R, W, Sx, dtailz, dtaily, dlgy)
+    Fx1 = forces[0][0]
+    Fx2 = forces[1][0] + forces[2][0]
+
     #input data
     Vx = []
     Mx = []

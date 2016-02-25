@@ -21,6 +21,8 @@ except ImportError:
     import os
     os.system("pip install matplotlib")
     import matplotlib.pyplot as plt
+from matplotlib import cm
+
 
 import structuralAnalysis
 import forces_x, forces_y, Torque
@@ -76,10 +78,9 @@ Mz  0        0      -0.5Lf3 0.5Lf3  0     = Sx*(dlgy+dtaily)
     Sx*(dlgy+dtaily),]]).T       
     [RLx, FLx, RL1y, RL2y, FLy] = solve(a, b)
     RL1x = RL2x = RLx/2.
-    
-    Ffront = (FLx, FLy)
-    Frear1 = (RL1x, RL1y)
-    Frear2 = (RL2x, RL2y)
+    Ffront = (FLx[0], FLy[0])
+    Frear1 = (RL1x[0], RL1y[0])
+    Frear2 = (RL2x[0], RL2y[0])
     
     return [Ffront, Frear1, Frear2]
 
@@ -153,9 +154,9 @@ def realCentroid(R, ts, floorHeight, tf, hst, wst, tst):
     for (x,y) in boomLocations(36, R, False, floorHeight):
         sumAd+=stiffenerArea*y
         sumA +=stiffenerArea
-        
-    Cy = sumAd/sumA
     
+    
+    Cy = sumAd/sumA
     return (0,Cy)               #Symmetry -> Cx = 0
 
 def boomLocations(nBooms,R,addFloor = False, floorHeight = None):
@@ -202,10 +203,11 @@ if __name__=="__main__":
     dtaily = 5.0
     dlgy = 1.8
     
+    
     Vx, Mx = forces_x.diagramsx()[:2]
     Vy, My = forces_y.diagramsy()[:2]
     qs0, T = Torque.shearstressT()
-    results = np.zeros(shape=(len(Vx)*(len(boomLocs)+1),5))
+    results = np.zeros(shape=(len(Vx)*(len(boomLocs)+1),6))
     n = 0
     Ff, Fr1, Fr2 = reactionForces(Lf1, Lf2, Lf3, L, R, W, Sx, dtailz, dtaily, dlgy)
     for el in range(len(Vx)):
@@ -227,14 +229,17 @@ if __name__=="__main__":
         for i, (x1,y1) in enumerate(boomLocs):
             (x2, y2) = boomLocs[(i-1)%len(booms)]
             (x,y) = ((x1+x2)/2,(y1+y2)/2)
-#             if np.isnan(qs[i]):
-#                 qs[i] = 0.
-            results[n] = [x,y,z,qs[i], qs[i]/ts]
+            results[n] = [x,y,z,qs[i], qs[i]/ts, qs[i]/ts*3**0.5]   #x,y,z,qs, tau, von mises
             n+=1
-#         if np.isnan(qs[-1]):
-#             qs[-1] = 0
-        results[n] = [0, fh-R, z, qs[-1], qs[-1]/tf]
+        results[n] = [0, fh-R, z, qs[-1], qs[-1]/tf, qs[-1]/tf*3**0.5]  #x,y,z,qs, tau, von mises
         n+=1
     v = results[np.argmax(results[:,4])]
     print v
-#     print v[3], type(v[3]), np.nan, v[3]==np.nan, v[3] is np.nan, np.isnan(v[3])
+    fig = plt.figure()
+    from mpl_toolkits.mplot3d import Axes3D
+    ax = fig.gca(projection="3d")
+    x = results[:,0]
+    y = results[:,1]
+    z = results[:,2]
+    S = ax.scatter(x,y,z, c = results[:,5])
+#     plt.show()
