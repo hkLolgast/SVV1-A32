@@ -30,7 +30,7 @@ dlgy = 1.8
 q = (3*W*9.81)/30.
 
 # shear and moment diagrams due to forces in y:
-def diagramsy():
+def diagramsy(step):
     forces = mn.reactionForces(Lf1, Lf2, Lf3, L, R, W, Sx, dtailz, dtaily, dlgy)
     Fy1 = forces[0][1]
     Fy2 = forces[1][1] + forces[2][1]
@@ -38,7 +38,7 @@ def diagramsy():
     #input data
     Vy = []
     My = []
-    step = 0.1
+#     step = 0.01
     z0 = 0.
     z1 = L-Lf1-Lf2
     z2 = L-Lf1

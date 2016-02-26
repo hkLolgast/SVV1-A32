@@ -5,29 +5,30 @@ Created on Feb 15, 2016
 '''
 try:
     import numpy as np
+    import matplotlib.pyplot as plt
 except ImportError:
     import os
     try:
+        print "Updating pip..."
+        os.system("python -m pip install -U pip")
+        print "Installing libraries..."
         os.system("pip install numpy")
+        os.system("pip install matplotlib")
         import numpy as np
+        import matplotlib.pyplot as plt
+        print "Libraries successfully installed and loaded"
     except:
         print "Please, be so kind to install pip if you want to do anything useful with python"
         os.system("pause")
         quit()
 from numpy.linalg import solve
-try:
-    import matplotlib.pyplot as plt
-except ImportError:
-    import os
-    os.system("pip install matplotlib")
-    import matplotlib.pyplot as plt
 from matplotlib import cm
 
 
 import structuralAnalysis
 import forces_x, forces_y, Torque
 
-np.set_printoptions(edgeitems=10)
+np.set_printoptions(edgeitems=40)
 
 def centroid(objects):
     '''
@@ -203,9 +204,9 @@ if __name__=="__main__":
     dtaily = 5.0
     dlgy = 1.8
     
-    
-    Vx, Mx = forces_x.diagramsx()[:2]
-    Vy, My = forces_y.diagramsy()[:2]
+    step = 0.01
+    Vx, Mx = forces_x.diagramsx(step)[:2]
+    Vy, My = forces_y.diagramsy(step)[:2]
     qs0, T = Torque.shearstressT()
     results = np.zeros(shape=(len(Vx)*(len(boomLocs)+1),6))
     n = 0
@@ -224,22 +225,48 @@ if __name__=="__main__":
         booms = []
         for i,boom in enumerate(boomLocs):
             booms.append((areas[i], boom))
-    
+
         qs = structuralAnalysis.totalShearFlow(booms, Sx, Sy, -Mz, floorAttachment, fh, R, tf, ts)
+#         if el==5:
+#             plt.plot(qs)
+#             plt.show()
+#             plt.clf()
         for i, (x1,y1) in enumerate(boomLocs):
             (x2, y2) = boomLocs[(i-1)%len(booms)]
             (x,y) = ((x1+x2)/2,(y1+y2)/2)
+            
             results[n] = [x,y,z,qs[i], qs[i]/ts, qs[i]/ts*3**0.5]   #x,y,z,qs, tau, von mises
             n+=1
         results[n] = [0, fh-R, z, qs[-1], qs[-1]/tf, qs[-1]/tf*3**0.5]  #x,y,z,qs, tau, von mises
         n+=1
-    v = results[np.argmax(results[:,4])]
-    print v
-    fig = plt.figure()
-    from mpl_toolkits.mplot3d import Axes3D
-    ax = fig.gca(projection="3d")
+    
+#     fig = plt.figure()
+#     from mpl_toolkits.mplot3d import Axes3D
+#     ax = fig.gca(projection="3d")
     x = results[:,0]
     y = results[:,1]
     z = results[:,2]
-    S = ax.scatter(x,y,z, c = results[:,5])
-#     plt.show()
+    r = results[:,5]
+    
+    #From the graphs, it can be seen that the sensible maximum lies between 13.4 and 13.5 meters - the attachment of the main landing gear
+    limx = x[np.where(13.4<z)]
+    limy = y[np.where(13.4<z)]
+    limz = z[np.where(13.4<z)]
+    limr = r[np.where(13.4<z)]
+    
+    limx = limx[np.where(limz<13.5)]
+    limy = limy[np.where(limz<13.5)]
+    limz = limz[np.where(limz<13.5)]
+    limr = limr[np.where(limz<13.5)]
+    
+#     v = results[np.where(np.all(13.4<z,z<13.5))][np.argmax(r[np.where(np.all(13.4<z,z<13.5))])]
+    i = np.argmax(abs(limr))
+    v = (limx[i], limy[i], limz[i], limr[i])
+    print v
+    for i in range(len(boomLocs)+1):
+        plt.plot(z[np.where(x==x[i])], r[np.where(x==x[i])])
+#     S = ax.scatter(x,y,z, c = results[:,5])
+#     print x
+#     print y
+#     print z
+    plt.show()
