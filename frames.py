@@ -46,7 +46,7 @@ part21 = - Fy1/Iyy*ts*(R*R*np.cos(interval))
 part12 = - Fx2/Ixx*ts*(R*R*np.sin(interval))
 part22 = - Fy2/Iyy*ts*(R*R*np.cos(interval))
 
-qb1 =  part11 + part21
+qb1 = part11 + part21
 q01 = Fx1*(R+dlgy)/(2*A)
 qtot1 = qb1 - q01
 
