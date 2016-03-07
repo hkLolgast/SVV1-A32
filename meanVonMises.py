@@ -8,6 +8,7 @@ with in the different colums the [x-location, y-location, z-location, mean Von M
 """
 import numpy as np
 import matplotlib.pyplot as plt
+from plotfunctions import *
 
 f1 = open('Fuselage_Boeing_737_Combined_Loads.rpt','r')
 data = f1.readlines()
@@ -51,65 +52,56 @@ print  lowest_stress
 
 ####first define the desired x,y-locations to be evaluated, the corresponding z-value and mean Von Mises will be found by program######
 
-#np.sort(meanVonMises)
 x_location = meanVonMises[:,0]
 y_location = meanVonMises[:,1]
 z_location = meanVonMises[:,2]
 VonMisesValues = meanVonMises[:,3]
 
+#creating an array with values for theta
+theta_array = np.ones(len(x_location))
+for i in range(len(x_location)):
+    theta_array[i] = angle_theta(x_location[i],y_location[i])  
+
+
+
 #rounding the values and putting it in a matrix
-x_location = np.matrix(np.round(x_location, decimals = 1))
-y_location = np.matrix(np.round(y_location, decimals = 1))
-z_location = np.matrix(np.round(z_location, decimals = 1))
-VonMisesValues = np.matrix(np.round(VonMisesValues, decimals = 1))
+x_location = np.matrix(np.round(x_location, decimals = 0))
+y_location = np.matrix(np.round(y_location, decimals = 0))
+z_location = np.matrix(np.round(z_location, decimals = 0))
+theta_array = np.matrix(np.round(theta_array, decimals =0))
+VonMisesValues = np.matrix(np.round(VonMisesValues, decimals = 2))
+
 
 #tranposing the matrices for hstacking later
 x_location = x_location.transpose()
 y_location = y_location.transpose()
 z_location = z_location.transpose()
+theta_array = theta_array.transpose()
 VonMisesValues = VonMisesValues.transpose()
 
 # h.stack to make the same matrix again
-rounded_vonMises = np.hstack((x_location,y_location,z_location,VonMisesValues))
+rounded_vonMises = np.hstack((x_location,y_location,z_location,theta_array,VonMisesValues))
 rounded_vonMises = np.array(rounded_vonMises)
+
 
 ###This option gives okay results:
 #x_location = -1994.9
 #y_location = 57.9
 
-###This one also nice results
-x_location = 57.9
-y_location = 1994.9
+###Select your x,y,z-locations
+x_location = -1995
+y_location = 58
+z_location = 26625
+z_location2 = 6125
+
+#Call the plotting functions to make a graph
+vonMises_cross_section(z_location,rounded_vonMises)
+vonMises_cross_section(z_location2,rounded_vonMises)
+#vonMises_fuselage(x_location,y_location,rounded_vonMises)
 
 
 
 
 
-
-plotdata = np.array([11,22,33,44])              #create table to enable vstack'ing
-
-##using the rounded data####
-for i in range(len(meanVonMises)):
-    if (rounded_vonMises[i,0]==x_location and rounded_vonMises[i,1]==y_location):
-        values = rounded_vonMises[i,:]
-        plotdata = np.vstack((plotdata,values))
-plotdata = plotdata[1:]                         #remove first row, which was there only for enables vstack'ing
-
-
-####plotting data is ready, now just plot it########
-z_values = plotdata[:,2]          
-Vonmises_values = plotdata[:,3]   
-
-#option for plotting with line (not so nice) or just the points (looks better)
-#plt.plot(z_values,Vonmises_values, linestyle='solid',color='black',  marker='o', markersize=4.0, markerfacecolor='orange',label='$experimental$ $2D$')
-plt.scatter(z_values,Vonmises_values, color= 'black')
-
-
-#x_location 'and' y_location
-
-plt.title('Von Mises stress against z-location for fixed x and y location')            
-plt.xlabel(r'z-coordinate', fontsize=15)
-plt.ylabel('mean Von Mises stress',fontsize=15)
-plt.show()
 
 
