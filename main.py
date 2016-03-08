@@ -204,11 +204,11 @@ if __name__=="__main__":
     dtaily = 5.0
     dlgy = 1.8
     
-    step = 0.01
+    step = 0.1
     Vx, Mx = forces_x.diagramsx(step)[:2]
     Vy, My = forces_y.diagramsy(step)[:2]
     qs0, T = Torque.shearstressT()
-    results = np.zeros(shape=(len(Vx)*(len(boomLocs)+1),6))
+    results = np.zeros(shape=(len(Vx)*(len(boomLocs)+1),7))
     n = 0
     Ff, Fr1, Fr2 = reactionForces(Lf1, Lf2, Lf3, L, R, W, Sx, dtailz, dtaily, dlgy)
     for el in range(len(Vx)):
@@ -225,24 +225,40 @@ if __name__=="__main__":
         booms = []
         for i,boom in enumerate(boomLocs):
             booms.append((areas[i], boom))
-
+        
         qs = structuralAnalysis.totalShearFlow(booms, Sx, Sy, -Mz, floorAttachment, fh, R, tf, ts)
-#         if el==5:
-#             plt.plot(qs)
-#             plt.show()
-#             plt.clf()
+        
+        Ixx = idealMomentOfInertia("x", booms)
+        Iyy = idealMomentOfInertia("y", booms)
+        Ixy = idealMomentOfInertia("xy", booms)
+        
+        if 13.4<z<=13.5:
+            plt.plot(qs)
+            plt.title("qs (z=%.2f)" % z)
+            plt.show()
+            plt.clf()
         for i, (x1,y1) in enumerate(boomLocs):
             (x2, y2) = boomLocs[(i-1)%len(booms)]
             (x,y) = ((x1+x2)/2,(y1+y2)/2)
-            
-            results[n] = [x,y,z,qs[i], qs[i]/ts, qs[i]/ts*3**0.5]   #x,y,z,qs, tau, von mises
+            sigma = (Ixx*my-Ixy*mx)/(Ixx*Iyy-Ixy**2)*x+(Iyy*mx-Ixy*my)/(Ixx*Iyy-Ixy**2)*y
+            results[n] = [x,y,z,qs[i], qs[i]/ts, (sigma**2+(qs[i]/ts)**2*3)**0.5, sigma]   #x,y,z,qs, tau, von mises
             n+=1
-        results[n] = [0, fh-R, z, qs[-1], qs[-1]/tf, qs[-1]/tf*3**0.5]  #x,y,z,qs, tau, von mises
+        x, y = 0, -0.2
+        
+        sigma = (Ixx*my-Ixy*mx)/(Ixx*Iyy-Ixy**2)*x+(Iyy*mx-Ixy*my)/(Ixx*Iyy-Ixy**2)*y
+#         if 11700<=n<11739:
+#             print my, mx, sigma, z
+        results[n] = [0, fh-R, z, qs[-1], qs[-1]/tf, (sigma**2+(qs[-1]/tf)**2*3)**0.5, sigma]  #x,y,z,qs, tau, von mises, normal stress
         n+=1
+        
     
 #     fig = plt.figure()
 #     from mpl_toolkits.mplot3d import Axes3D
 #     ax = fig.gca(projection="3d")
+#     print Mx[np.argmax(Mx)], np.argmax(Mx), My[np.argmax(abs(My))], np.argmax(abs(My))
+    plt.plot(results[5265:5303,5])
+    plt.title("Sigma (z=)")
+    plt.show()
     x = results[:,0]
     y = results[:,1]
     z = results[:,2]
@@ -263,8 +279,14 @@ if __name__=="__main__":
     i = np.argmax(abs(limr))
     v = (limx[i], limy[i], limz[i], limr[i])
     print v
-    for i in range(len(boomLocs)+1):
-        plt.plot(z[np.where(x==x[i])], r[np.where(x==x[i])])
+    for j in range(39):
+        if x[j]==v[0]:
+            break
+#     for i in range(len(boomLocs)+1):
+#     for i in (0,20):
+    for i in (j,):
+        plt.plot(z[np.where(x==x[i])], r[np.where(x==x[i])], label="(%.2f, %.2f)" % (x[i], y[i]))
+#     plt.legend()
 #     S = ax.scatter(x,y,z, c = results[:,5])
 #     print x
 #     print y

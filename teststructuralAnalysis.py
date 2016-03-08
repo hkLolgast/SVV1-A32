@@ -34,7 +34,7 @@ class TeststructuralAnalysis(unittest.TestCase):
             #Copy of the structural analysis version but without using calcqs0
             qs = standardShearFlows(self.booms, 0, 44500, (1,4))
     #         qs01, qs02 = calcqs0(booms, Sx, Sy, Mz, floorAttachment, fh, R, tf, ts)
-            qs01, qs02 = 0.7825, -7.346
+            qs01, qs02 = 0.7285, -7.346
             
             for i in range(len(qs)):
                 if i==len(qs)-1:
@@ -46,16 +46,17 @@ class TeststructuralAnalysis(unittest.TestCase):
             return qs
         
         qs = totalShearFlow()
-        expected = [34.01+0.7825,
-                    0+0.7825,
+        expected = [34.01+0.7285,
+                    0+0.7285,
                     0-7.346,            # - due to sign convention used 
                     -13.52-7.346,
                     0-7.346,
-                    0+0.7825,
-                    81.60-0.7825-7.346,]
+                    0+0.7285,
+                    81.60-0.7285-7.346,]
         
         for i,q in enumerate(qs):
             self.assertAlmostEqual(q, expected[i], places=1)
+            print q, expected[i]
         
         #restore old version
         totalShearFlow = oldShearFlow

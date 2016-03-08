@@ -17,6 +17,10 @@ class Testmain(unittest.TestCase):
         self.assertEqual(A,2.)      #Note that R is actually the distance from the center to a corner
         A = polygonArea(9001.,42.)
         self.assertAlmostEqual(A, np.pi*42*42, places=1)          #For n->inf the result will approximate a circle
+        self.assertRaises(ZeroDivisionError, polygonArea, 0,1)
+        for n in (1,2):
+            self.assertAlmostEqual(polygonArea(n, 1),0)
+        self.assertEqual(polygonArea(4, 0),0)
 
     def testrealMomentOfInertia(self):
         fh = 1.8
@@ -53,7 +57,7 @@ class Testmain(unittest.TestCase):
         Cx, Cy = realCentroid(R, ts, fh, tf, hst, wst, tst)
         expX, expY = (0,1.8772-R)
         self.assertAlmostEqual(Cx, expX, 3)
-        self.assertAlmostEqual(Cy, expY, delta=abs(0.03*Cy))
+        self.assertAlmostEqual(Cy, expY, delta=abs(0.05*Cy))
             
     def testidealMomentOfInertia(self):
         booms = [(5,(3,2))]
@@ -112,10 +116,10 @@ class Testmain(unittest.TestCase):
         
         self.assertAlmostEqual(FfrontyACT+Frear1yACT+Frear2yACT, W*3*9.81, places=1, msg = "No force equilibrium in y")
         self.assertAlmostEqual(FfrontxACT+Frear1xACT+Frear2xACT, Sx, places=1, msg = "No force equilibrium in x")
-        self.assertAlmostEqual(FfrontxACT, FfrontxVER, delta=abs(0.05*FfrontxVER))
-        self.assertAlmostEqual(FfrontyACT, FfrontyVER, delta=abs(0.05*FfrontyVER))
-        self.assertAlmostEqual(Frear1xACT+Frear2xACT, FrearxVER, delta=abs(0.05*FrearxVER))
-        self.assertAlmostEqual(Frear1yACT+Frear2yACT, FrearyVER, delta=abs(0.05*FrearyVER))
+        self.assertAlmostEqual(FfrontxACT, FfrontxVER, delta=abs(0.01*FfrontxVER))
+        self.assertAlmostEqual(FfrontyACT, FfrontyVER, delta=abs(0.01*FfrontyVER))
+        self.assertAlmostEqual(Frear1xACT+Frear2xACT, FrearxVER, delta=abs(0.01*FrearxVER))
+        self.assertAlmostEqual(Frear1yACT+Frear2yACT, FrearyVER, delta=abs(0.01*FrearyVER))
         
 
 if __name__ == "__main__":
