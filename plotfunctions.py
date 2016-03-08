@@ -29,8 +29,7 @@ def vonMises_cross_section(z_location,rounded_vonMises):
     plt.title('Von Mises stresses in cross section at z is ' + str(z_location) + 'mm')
     plt.xlabel('angle theta [degrees]', fontsize=15)
     plt.ylabel('mean Von Mises stress [MPA]',fontsize=15)
-    plt.show()
-    return
+    return(theta_values,Vonmises_values)
 
 
 def vonMises_fuselage(x_location,y_location,rounded_vonMises):
@@ -57,5 +56,4 @@ def vonMises_fuselage(x_location,y_location,rounded_vonMises):
     plt.title('Von Mises stress for fixed x = ' + str(x_location) + ' mm and y = ' + str(y_location) + ' mm')            
     plt.xlabel('z-coordinate [mm]', fontsize=15)
     plt.ylabel('mean Von Mises stress [MPA]',fontsize=15)
-    plt.show()
-    return
+    return(z_values,Vonmises_values)
