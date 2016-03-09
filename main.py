@@ -3,6 +3,8 @@ Created on Feb 15, 2016
 
 @author: Rick
 '''
+import plotfunctions
+from datafunctions import VonMises_with_Floor, VonMises_without_Floor
 try:
     import numpy as np
     import matplotlib.pyplot as plt
@@ -232,11 +234,11 @@ if __name__=="__main__":
         Iyy = idealMomentOfInertia("y", booms)
         Ixy = idealMomentOfInertia("xy", booms)
         
-        if 13.4<z<=13.5:
-            plt.plot(qs)
-            plt.title("qs (z=%.2f)" % z)
-            plt.show()
-            plt.clf()
+#         if 13.4<z<=13.5:
+#             plt.plot(qs)
+#             plt.title("qs (z=%.2f)" % z)
+#             plt.show()
+#             plt.clf()
         for i, (x1,y1) in enumerate(boomLocs):
             (x2, y2) = boomLocs[(i-1)%len(booms)]
             (x,y) = ((x1+x2)/2,(y1+y2)/2)
@@ -256,8 +258,18 @@ if __name__=="__main__":
 #     from mpl_toolkits.mplot3d import Axes3D
 #     ax = fig.gca(projection="3d")
 #     print Mx[np.argmax(Mx)], np.argmax(Mx), My[np.argmax(abs(My))], np.argmax(abs(My))
-    plt.plot(results[5265:5303,5])
-    plt.title("Sigma (z=)")
+    
+    
+    plt.subplot(121)
+    th = np.linspace(0,2*np.pi, 38)
+    plt.scatter(np.cos(-th+0.25*np.pi), np.sin(-th+0.25*np.pi),c=results[5265:5303,5])
+    plt.title("Numerical simulation")
+    
+    plt.subplot(122)
+    th, sig = plotfunctions.vonMises_cross_section(13375, VonMises_without_Floor('Fuselage_Boeing_737_Combined_Loads.rpt'))
+    th = 2*np.pi/max(th)*th
+    plt.scatter(np.cos(-th+0.25*np.pi), np.sin(-th+0.25*np.pi), c=10**6*sig)
+    plt.title("Validation")
     plt.show()
     x = results[:,0]
     y = results[:,1]

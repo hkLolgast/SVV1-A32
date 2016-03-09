@@ -25,10 +25,10 @@ def vonMises_cross_section(z_location,rounded_vonMises):
 
     #option for plotting with line (not so nice) or just the points (looks better)
     #plt.plot(z_values,Vonmises_values, linestyle='solid',color='black',  marker='o', markersize=3.0, markerfacecolor='orange',label='$experimental$ $2D$')
-    plt.scatter(theta_values,Vonmises_values, color= 'black')
-    plt.title('Von Mises stresses in cross section at z is ' + str(z_location) + 'mm')
-    plt.xlabel('angle theta [degrees]', fontsize=15)
-    plt.ylabel('mean Von Mises stress [MPA]',fontsize=15)
+#     plt.scatter(theta_values,Vonmises_values, color= 'black')
+#     plt.title('Von Mises stresses in cross section at z is ' + str(z_location) + 'mm')
+#     plt.xlabel('angle theta [degrees]', fontsize=15)
+#     plt.ylabel('mean Von Mises stress [MPA]',fontsize=15)
     return(theta_values,Vonmises_values)
 
 
@@ -49,11 +49,11 @@ def vonMises_fuselage(x_location,y_location,rounded_vonMises):
 
     #option for plotting with line (not so nice) or just the points (looks better)
     #plt.plot(z_values,Vonmises_values, linestyle='solid',color='black',  marker='o', markersize=3.0, markerfacecolor='orange',label='$experimental$ $2D$')
-    plt.scatter(z_values,Vonmises_values, color= 'black')
-
-
-    #x_location 'and' y_location
-    plt.title('Von Mises stress for fixed x = ' + str(x_location) + ' mm and y = ' + str(y_location) + ' mm')            
-    plt.xlabel('z-coordinate [mm]', fontsize=15)
-    plt.ylabel('mean Von Mises stress [MPA]',fontsize=15)
+#     plt.scatter(z_values,Vonmises_values, color= 'black')
+# 
+# 
+#     #x_location 'and' y_location
+#     plt.title('Von Mises stress for fixed x = ' + str(x_location) + ' mm and y = ' + str(y_location) + ' mm')            
+#     plt.xlabel('z-coordinate [mm]', fontsize=15)
+#     plt.ylabel('mean Von Mises stress [MPA]',fontsize=15)
     return(z_values,Vonmises_values)
