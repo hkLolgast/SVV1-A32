@@ -308,8 +308,16 @@ if __name__=="__main__":
 #             break
 #     for i in range(len(boomLocs)+1):
 #     for i in (0,20):
-    j = 38
+    
+    
+    wantedX, wantedY = (0,2)
+    diffs = [0]*39
+    for j in range(39):
+        diffs[j] = ((x[j]-wantedX)**2+(y[j]-wantedY)**2)**0.5
+    j = diffs.index(min(diffs))
+    #j = 0
     print x[j], y[j]
+    
     for i in (j,):
         plt.plot(z[np.where(x==x[i])], r[np.where(x==x[i])], label="(%.2f, %.2f)" % (x[i], y[i]))
 #     plt.legend()
