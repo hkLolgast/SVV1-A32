@@ -17,6 +17,9 @@ x_location = -1995
 y_location = 58
 z_location = 13375
 
+vonMises_colour_mapping(z_location,with_Floor_data)
+plt.show()
+
 
 #For cross section, possibilitie to change betweeen data with and without floor
 z_values,VonMises_z_values = vonMises_cross_section(z_location,without_Floor_data)
@@ -24,7 +27,7 @@ z_values,VonMises_z_values = vonMises_cross_section(z_location,without_Floor_dat
 #For fuselage, possibilitie to change betweeen data with and without floor
 theta_values,VonMises_theta_values = vonMises_fuselage(x_location,y_location,without_Floor_data)
 
-print z_values[0:200]
+#print z_values[0:200]
 
 
 

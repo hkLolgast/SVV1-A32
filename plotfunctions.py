@@ -9,6 +9,32 @@ def angle_theta(x,y):
     return theta
 
 
+def vonMises_colour_mapping(z_location,rounded_vonMises):
+    plotdata = np.array([11,22,33,44,55])              #create table to enable vstack'ing
+
+    ##using the rounded data####
+    for i in range(len(rounded_vonMises)):
+        if (rounded_vonMises[i,2]==z_location):
+            values = rounded_vonMises[i,:]
+            plotdata = np.vstack((plotdata,values))
+    plotdata = plotdata[1:]                         #remove first row, which was there only for enables vstack'ing
+
+    ####plotting data is ready, now just plot it########
+    x_values = plotdata[:,0]
+    y_values = plotdata[:,1]
+    Vonmises_values = plotdata[:,4]   
+
+    #option for plotting with line (not so nice) or just the points (looks better)
+    #plt.plot(z_values,Vonmises_values, linestyle='solid',color='black',  marker='o', markersize=3.0, markerfacecolor='orange',label='$experimental$ $2D$')
+    plt.scatter(x_values,y_values,c=Vonmises_values, s=30, vmin=0, vmax=260)
+    plt.colorbar()
+
+    plt.title('Von Mises stresses in cross section at z = ' + str(z_location) + 'mm')
+    plt.xlabel('x-location [mm]', fontsize=15)
+    plt.ylabel('y-location [mm]',fontsize=15)
+    return
+
+
 def vonMises_cross_section(z_location,rounded_vonMises):
     plotdata = np.array([11,22,33,44,55])              #create table to enable vstack'ing
 
