@@ -27,7 +27,7 @@ def vonMises_colour_mapping(z_location,rounded_vonMises):
     #option for plotting with line (not so nice) or just the points (looks better)
     #plt.plot(z_values,Vonmises_values, linestyle='solid',color='black',  marker='o', markersize=3.0, markerfacecolor='orange',label='$experimental$ $2D$')
     plt.scatter(x_values,y_values,c=Vonmises_values, s=30, vmin=0, vmax=260)
-    plt.colorbar()
+    plt.colorbar(label="[MPa]")
 
     plt.title('Von Mises stresses in cross section at z = ' + str(z_location) + 'mm')
     plt.xlabel('x-location [mm]', fontsize=15)

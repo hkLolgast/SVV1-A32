@@ -234,7 +234,8 @@ if __name__=="__main__":
         Iyy = idealMomentOfInertia("y", booms)
         Ixy = idealMomentOfInertia("xy", booms)
         
-#         if 13.4<z<=13.5:
+        if 6.4<z<=6.7:
+            print z, el, n
 #             plt.plot(qs)
 #             plt.title("qs (z=%.2f)" % z)
 #             plt.show()
@@ -260,17 +261,29 @@ if __name__=="__main__":
 #     print Mx[np.argmax(Mx)], np.argmax(Mx), My[np.argmax(abs(My))], np.argmax(abs(My))
     
     
-    plt.subplot(121)
+#     plt.subplot(121)
     th = np.linspace(0,2*np.pi, 38)
-    plt.scatter(np.cos(-th+0.25*np.pi), np.sin(-th+0.25*np.pi),c=results[5265:5303,5])
-    plt.title("Numerical simulation")
+    x = np.append(2000*np.cos(-th+0.5*np.pi), [0])
+    y = np.append(2000*np.sin(-th+0.5*np.pi), [-200.])
     
-    plt.subplot(122)
-    th, sig = plotfunctions.vonMises_cross_section(13375, VonMises_without_Floor('Fuselage_Boeing_737_Combined_Loads.rpt'))
-    th = 2*np.pi/max(th)*th
-    plt.scatter(np.cos(-th+0.25*np.pi), np.sin(-th+0.25*np.pi), c=10**6*sig)
-    plt.title("Validation")
-    plt.show()
+#     plt.scatter(x, y,c=10**-6*results[5265:5304,5],s=80, vmin=0, vmax=150)
+    plt.scatter(x, y,c=10**-6*results[2574:2613,5],s=80, vmin=0, vmax=150)
+    plt.title("Numerical simulation (z=6.625)")
+    plt.xlabel("x-location [mm]")
+    plt.ylabel("y-location [mm]")
+    plt.colorbar(label="[MPa]")
+    plt.savefig("Numerical_von_mises_6.625.png")
+#     plt.show()
+    plt.clf()
+    
+#     plt.subplot(122)
+    plotfunctions.vonMises_colour_mapping(6625, VonMises_with_Floor('Fuselage_Boeing_737_Combined_Loads.rpt'))
+    plt.title("Validation (z=6.625)")
+    plt.savefig("Validation_von_mises_6.625.png")
+#     plt.show()
+    plt.clf()
+#     plt.show()
+    
     x = results[:,0]
     y = results[:,1]
     z = results[:,2]
