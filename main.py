@@ -234,8 +234,8 @@ if __name__=="__main__":
         Iyy = idealMomentOfInertia("y", booms)
         Ixy = idealMomentOfInertia("xy", booms)
         
-        if 6.4<z<=6.7:
-            print z, el, n
+#         if 6.4<z<=6.7:
+#             print z, el, n
 #             plt.plot(qs)
 #             plt.title("qs (z=%.2f)" % z)
 #             plt.show()
@@ -255,34 +255,33 @@ if __name__=="__main__":
         n+=1
         
     
-#     fig = plt.figure()
-#     from mpl_toolkits.mplot3d import Axes3D
-#     ax = fig.gca(projection="3d")
 #     print Mx[np.argmax(Mx)], np.argmax(Mx), My[np.argmax(abs(My))], np.argmax(abs(My))
     
     
-#     plt.subplot(121)
-    th = np.linspace(0,2*np.pi, 38)
-    x = np.append(2000*np.cos(-th+0.5*np.pi), [0])
-    y = np.append(2000*np.sin(-th+0.5*np.pi), [-200.])
+# #     plt.subplot(121)
+#     th = np.linspace(0,2*np.pi, 38)
+#     x = np.append(2000*np.cos(-th+0.5*np.pi), [0])
+#     y = np.append(2000*np.sin(-th+0.5*np.pi), [-200.])
+#     
+# #     plt.scatter(x, y,c=10**-6*results[5265:5304,5],s=80, vmin=0, vmax=150)
+#     plt.scatter(x, y,c=10**-6*results[2574:2613,5],s=80, vmin=0, vmax=150)
+#     plt.title("Numerical simulation (z=6.625)")
+#     plt.xlabel("x-location [mm]")
+#     plt.ylabel("y-location [mm]")
+#     plt.colorbar(label="[MPa]")
+#     plt.savefig("Numerical_von_mises_6625.png")
+# #     plt.show()
+#     plt.clf()
+#     
+# #     plt.subplot(122)
+#     plotfunctions.vonMises_colour_mapping(6625, VonMises_with_Floor('Fuselage_Boeing_737_Combined_Loads.rpt'))
+#     plt.title("Validation (z=6.625)")
+#     plt.savefig("Validation_von_mises_6625.png")
+# #     plt.show()
+#     plt.clf()
+# #     plt.show()
     
-#     plt.scatter(x, y,c=10**-6*results[5265:5304,5],s=80, vmin=0, vmax=150)
-    plt.scatter(x, y,c=10**-6*results[2574:2613,5],s=80, vmin=0, vmax=150)
-    plt.title("Numerical simulation (z=6.625)")
-    plt.xlabel("x-location [mm]")
-    plt.ylabel("y-location [mm]")
-    plt.colorbar(label="[MPa]")
-    plt.savefig("Numerical_von_mises_6.625.png")
-#     plt.show()
-    plt.clf()
-    
-#     plt.subplot(122)
-    plotfunctions.vonMises_colour_mapping(6625, VonMises_with_Floor('Fuselage_Boeing_737_Combined_Loads.rpt'))
-    plt.title("Validation (z=6.625)")
-    plt.savefig("Validation_von_mises_6.625.png")
-#     plt.show()
-    plt.clf()
-#     plt.show()
+            
     
     x = results[:,0]
     y = results[:,1]
@@ -303,12 +302,14 @@ if __name__=="__main__":
 #     v = results[np.where(np.all(13.4<z,z<13.5))][np.argmax(r[np.where(np.all(13.4<z,z<13.5))])]
     i = np.argmax(abs(limr))
     v = (limx[i], limy[i], limz[i], limr[i])
-    print v
-    for j in range(39):
-        if x[j]==v[0]:
-            break
+    print "Maximum:",v
+#     for j in range(39):
+#         if x[j]==v[0]:
+#             break
 #     for i in range(len(boomLocs)+1):
 #     for i in (0,20):
+    j = 38
+    print x[j], y[j]
     for i in (j,):
         plt.plot(z[np.where(x==x[i])], r[np.where(x==x[i])], label="(%.2f, %.2f)" % (x[i], y[i]))
 #     plt.legend()
