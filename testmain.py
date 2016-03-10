@@ -32,8 +32,10 @@ class Testmain(unittest.TestCase):
         tst = 0.012
         Ixx = realMomentOfInertia("x", R, ts, fh, tf, hst, wst, tst)
         Iyy = realMomentOfInertia("y", R, ts, fh, tf, hst, wst, tst)
-        self.assertAlmostEqual(Ixx, 0.1018,delta=abs(0.05*Ixx))
-        self.assertAlmostEqual(Iyy, 0.2072,delta=abs(0.05*Iyy))
+        expIxx = 0.1069
+        expIyy = 0.2123
+        self.assertAlmostEqual(Ixx, expIxx,delta=abs(0.05*expIxx))
+        self.assertAlmostEqual(Iyy, expIyy,delta=abs(0.05*expIyy))
 
     def testboomLocations(self):
         boomLocs = boomLocations(36, 2., True, 1.8)
