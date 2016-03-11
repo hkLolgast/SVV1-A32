@@ -30,8 +30,8 @@ def boomAreas(Mx, My, booms, R, ts, floorHeight, tf, hst, wst, tst):
     for i,(x,y) in enumerate(booms):
         #Calculate stress without terms that will vanish
         stressBases[i] = My/Iyy*(x-Cx)+Mx/Ixx*(y-Cy)
-        if stressBases[i] == 0:
-            print My, Iyy, Mx, Ixx, x, Cx, y, Cy
+#         if stressBases[i] == 0:
+#             print My, Iyy, Mx, Ixx, x, Cx, y, Cy
         #Check how close this boom is to the floor attachment
         floorDist1[i] = ((x-floorAttach1[0])**2+(y-floorAttach1[1])**2)**0.5
         floorDist2[i] = ((x-floorAttach2[0])**2+(y-floorAttach2[1])**2)**0.5

@@ -11,28 +11,32 @@ import main as mn
 
 ####input data:
 
-hf = 1.8
-R = 2.0
-ts = 0.003
-tf = 0.02
-hst = 0.015
-wst = 0.02
-tst = 0.0012
-L = 30.
-Lf1 = 4.0
-Lf2 = 12.5
-Lf3 = 5.2
-W = 65000.0
-Sx = 170000.0
-dtailz = 2.8
-dtaily = 5.0
-dlgy = 1.8
+if __name__=="__main__":
+    # input data
+    fh = 1.8
+    R = 2.0
+    ts = 0.003
+    tf = 0.02
+    hst = 0.015
+    wst = 0.02
+    tst = 0.0012
+    L = 30.
+    Lf1 = 4.0
+    Lf2 = 12.5
+    Lf3 = 5.2
+    W = 65000.0
+    Sx = 170000.0
+    dtailz = 2.8
+    dtaily = 5.0
+    dlgy = 1.8
+else:
+    from __main__ import fh, R, ts, tf, hst, wst, tst, L, Lf1, Lf2, Lf3, W, Sx, dtailz, dtaily, dlgy
 T = Sx*(dlgy+dtaily)
 
 def shearstressT():
     
     #### geom calculations
-    Iyy = mn.realMomentOfInertia('y', R, ts, hf, tf, hst, wst, tst)
+    Iyy = mn.realMomentOfInertia('y', R, ts, fh, tf, hst, wst, tst)
     Sfic = 20.
     d = 0.2
     step = 100.
@@ -134,7 +138,7 @@ def shearstressT():
             T = T - T2 - T1
             
         # geometrical parameters of the strucutre
-        alpha = np.arccos((R-hf)/R)
+        alpha = np.arccos((R-fh)/R)
         A2 = alpha*R*R - np.cos(alpha)*np.sin(alpha)*R*R
         A1 = np.pi*R*R - A2
         #print 'A1',A1,'A2',A2

@@ -3,6 +3,62 @@ Created on Feb 15, 2016
 
 @author: Rick
 '''
+
+fh = 1.8
+R = 3.0
+ts = 0.003
+tf = 0.04
+hst = 0.15
+wst = 0.04
+tst = 0.012
+L = 30.
+Lf1 = 4.0
+Lf2 = 12.5
+Lf3 = 5.2
+W = 65000.0
+Sx = 170000.0
+dtailz = 2.8
+dtaily = 5.0
+dlgy = 1.8
+
+'''
+Normal:
+    x: 1.99498743711
+    y: -0.1
+    z: 13.3554817276
+    Von Mises stress: 1.331594e+08
+Higher Sx:
+    x: -1.14278760969
+    y: 1.6320698469
+    z: 13.4551495017
+    Von Mises stress: 1.747969e+08
+Higher weight:
+    x: 1.99498743711
+    y: -0.1
+    z: 13.3554817276
+    Von Mises stress: 2.464144e+08
+Higher tf:
+    x: 1.99498743711
+    y: -0.1
+    z: 13.3554817276
+    Von Mises stress: 1.268518e+08
+Higher ts:
+    x: 1.99498743711
+    y: -0.1
+    z: 13.3554817276
+    Von Mises stress: 8.807580e+07
+Lower Lf2:
+    x: 1.99498743711
+    y: -0.1
+    z: 15.3488372093
+    Von Mises stress: 1.560959e+08
+Higher R:
+    x: 2.8867505607
+    y: -0.773502481489
+    z: 13.3554817276
+    Von Mises stress: 9.623139e+07
+'''
+
 import plotfunctions
 from datafunctions import VonMises_with_Floor, VonMises_without_Floor
 try:
@@ -187,25 +243,9 @@ def polygonArea(n, R):
     return 1./2*n*R**2*np.sin(2*np.pi/n)
 
 if __name__=="__main__":
-    fh = 1.8
-    R = 2.
     boomLocs = boomLocations(36, R, True, fh)
-    ts = 0.003
-    tf = 0.02
-    hst = 0.015
-    wst = 0.02
-    tst = 0.012
-    lf = 2*(fh*(2*R-fh))**0.5
-    L = 30.
-    Lf1 = 4.
-    Lf2 = 12.5
-    Lf3 = 5.2
-    W = 65000.
-    Sx = 1.7*10**5
-    dtailz = 2.8
-    dtaily = 5.0
-    dlgy = 1.8
-    
+
+        
     step = 0.1
     Vx, Mx = forces_x.diagramsx(step)[:2]
     Vy, My = forces_y.diagramsy(step)[:2]
@@ -246,7 +286,6 @@ if __name__=="__main__":
             sigma = (Ixx*my-Ixy*mx)/(Ixx*Iyy-Ixy**2)*x+(Iyy*mx-Ixy*my)/(Ixx*Iyy-Ixy**2)*y
             results[n] = [x,y,z,qs[i], qs[i]/ts, (sigma**2+(qs[i]/ts)**2*3)**0.5, sigma]   #x,y,z,qs, tau, von mises
             n+=1
-        x, y = 0, -0.2
         
         sigma = (Ixx*my-Ixy*mx)/(Ixx*Iyy-Ixy**2)*x+(Iyy*mx-Ixy*my)/(Ixx*Iyy-Ixy**2)*y
 #         if 11700<=n<11739:
@@ -254,7 +293,6 @@ if __name__=="__main__":
         results[n] = [0, fh-R, z, qs[-1], qs[-1]/tf, (sigma**2+(qs[-1]/tf)**2*3)**0.5, sigma]  #x,y,z,qs, tau, von mises, normal stress
         n+=1
         
-    
 #     print Mx[np.argmax(Mx)], np.argmax(Mx), My[np.argmax(abs(My))], np.argmax(abs(My))
     
     
@@ -289,20 +327,26 @@ if __name__=="__main__":
     r = results[:,5]
     
     #From the graphs, it can be seen that the sensible maximum lies between 13.4 and 13.5 meters - the attachment of the main landing gear
-    limx = x[np.where(13.4<z)]
-    limy = y[np.where(13.4<z)]
-    limz = z[np.where(13.4<z)]
-    limr = r[np.where(13.4<z)]
+    limx = x[np.where(6<z)]
+    limy = y[np.where(6<z)]
+    limz = z[np.where(6<z)]
+    limr = r[np.where(6<z)]
     
-    limx = limx[np.where(limz<13.5)]
-    limy = limy[np.where(limz<13.5)]
-    limz = limz[np.where(limz<13.5)]
-    limr = limr[np.where(limz<13.5)]
+    limx = limx[np.where(limz<24)]
+    limy = limy[np.where(limz<24)]
+    limz = limz[np.where(limz<24)]
+    limr = limr[np.where(limz<24)]
     
 #     v = results[np.where(np.all(13.4<z,z<13.5))][np.argmax(r[np.where(np.all(13.4<z,z<13.5))])]
     i = np.argmax(abs(limr))
     v = (limx[i], limy[i], limz[i], limr[i])
-    print "Maximum:",v
+    print "Maximum:"
+    print '''    x: {}
+    y: {}
+    z: {}
+    Von Mises stress: {:e}'''.format(*v)
+
+
 #     for j in range(39):
 #         if x[j]==v[0]:
 #             break
@@ -316,7 +360,7 @@ if __name__=="__main__":
         diffs[j] = ((x[j]-wantedX)**2+(y[j]-wantedY)**2)**0.5
     j = diffs.index(min(diffs))
     #j = 0
-    print x[j], y[j]
+#     print x[j], y[j]
     
     for i in (j,):
         plt.plot(z[np.where(x==x[i])], r[np.where(x==x[i])], label="(%.2f, %.2f)" % (x[i], y[i]))

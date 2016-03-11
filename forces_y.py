@@ -10,23 +10,26 @@ import matplotlib.pyplot as plt
 import main as mn
 #import structuralAnalysis as sa
 
-# input data
-hf = 1.8
-R = 2.0
-ts = 0.003
-tf = 0.02
-hst = 0.015
-wst = 0.02
-tst = 0.0012
-L = 30.
-Lf1 = 4.0
-Lf2 = 12.5
-Lf3 = 5.2
-W = 65000.0
-Sx = 170000.0
-dtailz = 2.8
-dtaily = 5.0
-dlgy = 1.8
+if __name__=="__main__":
+    # input data
+    fh = 1.8
+    R = 2.0
+    ts = 0.003
+    tf = 0.02
+    hst = 0.015
+    wst = 0.02
+    tst = 0.0012
+    L = 30.
+    Lf1 = 4.0
+    Lf2 = 12.5
+    Lf3 = 5.2
+    W = 65000.0
+    Sx = 170000.0
+    dtailz = 2.8
+    dtaily = 5.0
+    dlgy = 1.8
+else:
+    from __main__ import fh, R, ts, tf, hst, wst, tst, L, Lf1, Lf2, Lf3, W, Sx, dtailz, dtaily, dlgy
 q = (3*W*9.81)/30.
 
 # shear and moment diagrams due to forces in y:
