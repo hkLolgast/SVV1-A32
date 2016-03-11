@@ -34,6 +34,8 @@ class Testmain(unittest.TestCase):
         Iyy = realMomentOfInertia("y", R, ts, fh, tf, hst, wst, tst)
         expIxx = 0.1069
         expIyy = 0.2123
+        print "Ixx: exp {}, actual {}".format(expIxx, Ixx)
+        print "Iyy: exp {}, actual {}".format(expIyy, Iyy)
         self.assertAlmostEqual(Ixx, expIxx,delta=abs(0.05*expIxx))
         self.assertAlmostEqual(Iyy, expIyy,delta=abs(0.05*expIyy))
 
@@ -58,6 +60,8 @@ class Testmain(unittest.TestCase):
         tst = 0.012
         Cx, Cy = realCentroid(R, ts, fh, tf, hst, wst, tst)
         expX, expY = (0,1.8772-R)
+        print "X: exp {}, actual {}".format(expX, Cx)
+        print "Y: exp {}, actual {}".format(expY, Cy)
         self.assertAlmostEqual(Cx, expX, 3)
         self.assertAlmostEqual(Cy, expY, delta=abs(0.05*Cy))
             
@@ -116,6 +120,19 @@ class Testmain(unittest.TestCase):
         (Frear1xACT, Frear1yACT), \
         (Frear2xACT, Frear2yACT) = reactionForces(Lf1, Lf2, Lf3, L, R, W, Sx, dtailz, dtaily, dlgy)
         
+        self.assertAlmostEqual(FfrontyACT+Frear1yACT+Frear2yACT, W*3*9.81, places=1, msg = "No force equilibrium in y")
+        self.assertAlmostEqual(FfrontxACT+Frear1xACT+Frear2xACT, Sx, places=1, msg = "No force equilibrium in x")
+        self.assertAlmostEqual(FfrontxACT, FfrontxVER, delta=abs(0.01*FfrontxVER))
+        self.assertAlmostEqual(FfrontyACT, FfrontyVER, delta=abs(0.01*FfrontyVER))
+        self.assertAlmostEqual(Frear1xACT+Frear2xACT, FrearxVER, delta=abs(0.01*FrearxVER))
+        self.assertAlmostEqual(Frear1yACT+Frear2yACT, FrearyVER, delta=abs(0.01*FrearyVER))
+        
+        W = 0
+        Sx = 0
+        (FfrontxACT, FfrontyACT), \
+        (Frear1xACT, Frear1yACT), \
+        (Frear2xACT, Frear2yACT) = reactionForces(Lf1, Lf2, Lf3, L, R, W, Sx, dtailz, dtaily, dlgy)
+        FfrontxVER = FfrontyVER = FrearxVER = FrearyVER = 0
         self.assertAlmostEqual(FfrontyACT+Frear1yACT+Frear2yACT, W*3*9.81, places=1, msg = "No force equilibrium in y")
         self.assertAlmostEqual(FfrontxACT+Frear1xACT+Frear2xACT, Sx, places=1, msg = "No force equilibrium in x")
         self.assertAlmostEqual(FfrontxACT, FfrontxVER, delta=abs(0.01*FfrontxVER))
